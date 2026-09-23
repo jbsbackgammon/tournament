@@ -15,6 +15,11 @@ const autoFormatForSize = size => {
 const syncOutputOptions = limit => {
   for (const option of $('output-size').options) option.hidden = Number(option.value) > Number(limit);
 };
+const syncFormatOptions = limit => {
+  const a4 = $('format').querySelector('option[value="a4"]');
+  a4.hidden = Number(limit) < 32;
+  if (a4.hidden && view.format === 'a4') autoFormatForSize(limit);
+};
 let noticeTimer;
 const note = (message, error = false) => {
   clearTimeout(noticeTimer);
@@ -41,6 +46,7 @@ function syncControls() {
   state.footer = '';
   $('source-size').value = state.size;
   syncOutputOptions(state.size);
+  syncFormatOptions(view.displaySize);
   for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
   $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
@@ -104,6 +110,7 @@ $('import-source').addEventListener('click', () => importText($('source-text').v
 $('source-size').addEventListener('change', event => {
   const size = Number(event.target.value);
   syncOutputOptions(size);
+  syncFormatOptions(size);
   view.displaySize = size;
   $('output-size').value = size;
   autoFormatForSize(size);
@@ -141,6 +148,7 @@ $('format').addEventListener('change', event => { view.format = event.target.val
 $('output-size').addEventListener('change', event => {
   view.displaySize = Number(event.target.value);
   editRound = Math.log2(state.size / view.displaySize);
+  syncFormatOptions(view.displaySize);
   syncControls();
 });
 $('show-notes').addEventListener('change', event => { state.showNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
