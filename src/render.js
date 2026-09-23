@@ -35,7 +35,7 @@ export function renderBracket(state, options = {}) {
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
   const accent = /^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : '#70700d';
-  const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeXml(state.edition + state.title || 'トーナメント表')}">`, `<rect width="${W}" height="${H}" fill="white"/>`, `<g font-family="'Yu Gothic','Meiryo','Hiragino Kaku Gothic ProN',sans-serif" fill="#080808">`];
+  const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeXml(state.edition + state.title || 'トーナメント表')}">`, `<rect width="${W}" height="${H}" fill="white"/>`, `<g font-family="'Noto Sans JP','Yu Gothic','Meiryo','Hiragino Kaku Gothic ProN',sans-serif" fill="#080808">`];
   const text = (value, x, y, fs, maxWidth, color = '#080808', weight = 700) => {
     const fit = estimateWidth(String(value)) * fs > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
     return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" fill="${color}" font-weight="${weight}"${fit}>${escapeXml(value)}</text>`;
