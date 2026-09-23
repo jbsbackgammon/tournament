@@ -49,7 +49,7 @@ dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;
 
 .output-options{display:flex;align-items:center;flex-wrap:wrap;gap:8px 24px}.output-options .help{margin-left:auto}
 .export-actions{display:flex;gap:10px;margin-top:14px}.export-actions button{flex:1;min-height:48px}.export-actions .primary{justify-content:space-between}
-.editor-meta-row{display:flex;align-items:end;gap:10px;flex:1;margin-bottom:16px}.editor-meta-row label{margin:0;min-width:0;flex:1}.editor-meta-row .edition{flex:0 0 120px}.accent-swatch{display:block;width:32px;height:32px;margin-top:6px;border:1px solid #777;border-radius:3px}
+.editor-meta-row{display:flex;align-items:end;gap:10px;flex:1;margin-bottom:16px}.editor-meta-row label{margin:0;min-width:0;flex:1}.editor-meta-row .edition{flex:0 0 120px}.accent-swatch{display:block;width:32px;height:32px;margin-top:6px;border:1px solid #c5cfda;border-radius:5px}
 .editor-options{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;margin:0 0 16px;padding:10px 0;border-bottom:1px solid #dce3ea}.editor-options .check{margin:0}
 #titles-editor{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .title-item{margin:0 0 12px}.data-actions{margin-bottom:8px}details{margin-top:4px}
