@@ -10,7 +10,7 @@ h2{font-size:1rem;margin:0 0 12px}p{line-height:1.65}
 .workspace{max-width:1440px;margin:auto;padding:20px 24px 48px}
 .preview-surface{background:white;border:1px solid #d4dce5;border-radius:6px;overflow:hidden;margin-bottom:24px}
 #preview{max-width:1250px;margin:auto;background:white}#preview svg{display:block;width:100%;height:auto}
-.editing-layout{display:grid;grid-template-columns:360px minmax(0,1fr);align-items:start;gap:24px}
+.editing-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:24px}
 .controls,.editor-section{background:white;border:1px solid #d4dde6;border-radius:6px;padding:22px;min-width:0}
 .controls section+section{border-top:1px solid #e0e5eb;padding-top:20px;margin-top:22px}
 .data-actions,.row{display:flex;align-items:end;gap:10px}.data-actions{flex-wrap:wrap;margin-bottom:12px}.data-actions label{margin:0}
@@ -29,6 +29,6 @@ details{margin-top:14px}summary{cursor:pointer;font-size:.875rem;font-weight:650
 .champion-field{max-width:360px}.title-item{border-left:4px solid #70700d;padding-left:10px;margin:16px 0}.title-item .row label{margin:4px 0}.title-item>label{margin:5px 0}
 #notice:empty{display:none}#notice{font-size:.875rem;background:#e4edf6;color:#244767;border:1px solid #bdd0e2;padding:10px 14px;border-radius:5px;margin-bottom:18px}#notice.error{background:#fff1f1;color:#a52d34;border-color:#ebc1c4}
 dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;color:#1c2a3a}dialog::backdrop{background:#13283c70}dialog form{display:flex;gap:12px;justify-content:flex-end;margin-top:24px}[hidden]{display:none!important}
-@media(max-width:1150px){.editing-layout{grid-template-columns:320px minmax(0,1fr);gap:18px}.players-grid{grid-template-columns:1fr}.controls,.editor-section{padding:18px}}
+@media(max-width:1150px){.editing-layout{grid-template-columns:minmax(0,1fr);gap:18px}.players-grid{grid-template-columns:1fr}.controls,.editor-section{padding:18px}}
 @media(max-width:760px){.workspace{padding:10px 10px 32px}.preview-surface{margin-bottom:16px}.editing-layout{grid-template-columns:1fr;gap:16px}.editor-heading{align-items:start;flex-wrap:wrap;gap:12px}.editor-heading label{width:100%}.controls,.editor-section{padding:18px}}
 @media print{.editing-layout,#notice{display:none}.workspace{padding:0}.preview-surface{border:0;margin:0}}
