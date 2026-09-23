@@ -112,3 +112,24 @@ test('PNG pHYs embeds 300dpi, has a valid CRC and replaces existing metadata', (
   assert.equal(new DataView(out.buffer).getUint32(50), crc32(out.slice(37, 50)));
   assert.deepEqual(withDpi(out, 300), out);
 });
+
+test('winner routes include the outgoing arm through quarterfinals on both sides', () => {
+  for (const size of [8, 16, 32, 64]) {
+    const state = createTournament(size);
+    state.rounds[0] = Array.from({ length: size }, (_, i) => `Player ${i}`);
+    for (let r = 0; r < state.rounds.length - 1; r++) {
+      for (let i = 0; i < state.rounds[r].length; i += 2) advance(state, r, i);
+    }
+    const { nodes, levels } = bracketGeometry(size, 810);
+    const svg = renderBracket(state);
+    const red = svg.match(/<g stroke="#e71920"[^>]*>(.*?)<\/g>/)[1];
+    for (let r = 0; r < levels - 1; r++) {
+      for (let i = 0; i < nodes[r].length; i += 2) {
+        const p = nodes[r][i], dest = nodes[r + 1][i / 2];
+        const outgoing = state.rounds[r].length >= 8 ? `H${nodes[r + 2][Math.floor(i / 4)].x}` : '';
+        assert.ok(red.includes(`<path d="M${p.x} ${p.y}H${dest.x}V${dest.y}${outgoing}"/>`));
+      }
+    }
+    assert.match(svg, /stroke="#e71920"[^>]*stroke-linecap="square"/);
+  }
+});
