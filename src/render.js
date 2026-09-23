@@ -88,9 +88,10 @@ export function renderBracket(state, options = {}) {
   const titleY = size === 8 ? H * .135 : portrait ? Math.min(H * .09, 155) : H * .13;
   const titleFont = size === 64 ? 66 : 81;
   parts.push(text(state.edition, W / 2, titleY - titleFont * .85, 32, titleWidth));
-  parts.push(text(state.title || '大会名', W / 2, titleY + 15, titleFont, titleWidth));
-  parts.push(`<rect x="${W / 2 - titleWidth / 2}" y="${titleY + 30}" width="${titleWidth}" height="42" fill="${accent}"/>`);
-  parts.push(text(state.subtitle, W / 2, titleY + 59, 27, titleWidth - 30, '#fff'));
+  parts.push(text(state.title || '大会名', W / 2, titleY + 15, titleFont, titleFont * 7));
+  const subtitleWidth = Math.min(titleWidth, Math.max(150, estimateWidth(state.subtitle) * 27 + 28));
+  parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${titleY + 30}" width="${subtitleWidth}" height="42" fill="${accent}"/>`);
+  parts.push(text(state.subtitle, W / 2, titleY + 59, 27, subtitleWidth - 24, '#fff'));
   const championY = Math.max(titleY + 115, finalY - (portrait ? H * .16 : 102));
   parts.push(text('優勝', W / 2, championY, 26, 205));
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
