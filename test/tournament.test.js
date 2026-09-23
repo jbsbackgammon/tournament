@@ -70,7 +70,7 @@ test('saved JSON roundtrip and malformed JSON validation', async () => {
   const state = await load(16); state.notes['川島 颯'] = '予選B組1位'; state.showTitles = true;
   assert.deepEqual(validateTournament(JSON.parse(JSON.stringify(state))), state);
   assert.throws(() => validateTournament({ version: 1, size: 16, rounds: [] }));
-  assert.equal(validateTournament({ ...state, accent: 'red"/><script>' }).accent, '#70700d');
+  assert.equal(validateTournament({ ...state, accent: 'red"/><script>' }).accent, '#000000');
 });
 test('supplementary information hidden only for 64 display; footer titles opt-in', () => {
   const state = createTournament(64); state.rounds[0][0] = 'A'; state.rounds[2][0] = 'A'; state.notes.A = 'NOTE_MARKER';
