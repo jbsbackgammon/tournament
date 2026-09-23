@@ -204,7 +204,8 @@ $('export-png').addEventListener('click', async () => {
     const blob = await exportPng(snapshot, settings);
     const { width, height } = dimensions(settings.format, settings.orientation);
     downloadBlob(blob, `tournament_${safeFilename(snapshot.edition + snapshot.title)}_${settings.displaySize}_${width}x${height}.png`);
-    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${snapshot.edition || ''}${snapshot.title || '大会'}・${new Date().toLocaleString('ja-JP')}`, state: snapshot, view: settings });
+    const outputTime = new Date().toLocaleString('ja-JP');
+    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${outputTime}・${snapshot.edition || ''}${snapshot.title || '大会'}`, state: snapshot, view: settings });
     note('PNGを書き出しました。');
   } catch (error) { note(`PNGを書き出せませんでした。${error.message}`, true); }
   finally { $('export-png').disabled = false; }
