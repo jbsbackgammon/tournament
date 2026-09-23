@@ -45,7 +45,7 @@ export function importTournament(text, requestedSize = 16) {
     const titleMatch = cleanName(data.name).match(/^(第\s*\d+\s*[回期])\s*(.*)$/);
     state.edition = titleMatch?.[1] || '';
     state.title = titleMatch?.[2] || cleanName(data.name);
-    state.accent = state.title.includes('新鋭') ? '#10686b' : state.title.includes('女王') ? '#710d61' : state.title.includes('盤聖') ? '#75092f' : '#70700d';
+    state.accent = state.title.includes('新鋭') ? '#10686b' : state.title.includes('女王') ? '#710d61' : state.title.includes('盤聖') ? '#75092f' : '#000000';
     state.champion = cleanName(data.winner);
     state.sourceUpdated = cleanName(data.update);
     state.roundPoints = state.roundPoints.map((_, i) => cleanName(String(data.roundpts ?? '').split(',')[i]));

@@ -49,7 +49,7 @@ dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;
 
 .output-options{display:flex;align-items:center;flex-wrap:wrap;gap:8px 24px}.output-options .help{margin-left:auto}
 .export-actions{display:flex;gap:10px;margin-top:14px}.export-actions button{flex:1;min-height:48px}.export-actions .primary{justify-content:space-between}
-.editor-meta-row{display:flex;align-items:end;gap:10px;flex:1;margin-bottom:16px}.editor-meta-row label{margin:0;min-width:0;flex:1}.editor-meta-row .edition{flex:0 0 120px}.accent-swatch{display:block;width:32px;height:32px;margin-top:6px;border:1px solid #777;border-radius:3px}
+.editor-meta-row{display:flex;align-items:end;gap:10px;flex:1;margin-bottom:16px}.editor-meta-row label{margin:0;min-width:0;flex:1}.editor-meta-row .edition{flex:0 0 120px}.accent-swatch{display:block;width:32px;height:32px;margin-top:6px;border:1px solid #c5cfda;border-radius:5px}
 .editor-options{display:flex;align-items:center;flex-wrap:wrap;gap:8px 20px;margin:0 0 16px;padding:10px 0;border-bottom:1px solid #dce3ea}.editor-options .check{margin:0}
 #titles-editor{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .title-item{margin:0 0 12px}.data-actions{margin-bottom:8px}details{margin-top:4px}
@@ -65,5 +65,22 @@ dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;
 .editor-heading h2{padding-bottom:0!important;margin-bottom:0!important}.editor-heading{padding-bottom:0!important}
 .player-row button{height:40px;min-height:40px;align-self:start}
 body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo",sans-serif}
+.title-picker{display:flex;position:relative;margin-top:6px;height:40px}.title-picker>#master-toggle{flex:0 0 88px;height:40px;min-height:40px;margin:0;border:1px solid #c5cfda;border-right:0;border-radius:5px 0 0 5px;background:#fff;color:#1c2a3a;font-size:.875rem;font-weight:600}.title-picker>#title{height:40px;min-height:40px;margin:0;border-radius:0 5px 5px 0;font-size:.875rem}.title-picker>#tournament-master{position:absolute;z-index:5;left:0;top:42px;width:100%;height:auto;max-height:320px;margin:0;padding:0;background:#fff;border:1px solid #c5cfda;border-radius:0 0 14px 14px;box-shadow:0 8px 18px #1c2a3a22;font-size:.875rem;line-height:1.35}.title-picker>#tournament-master option{padding:7px 12px;background:#fff;color:#1c2a3a}
 .output-format-row{display:flex!important;gap:16px;align-items:stretch}.output-format-row select{flex:1;min-width:0!important}.editor-meta-row label:last-child{min-width:150px;padding-right:38px}.editor-meta-row label:last-child .accent-swatch{z-index:2}
-.editor-heading{min-height:0!important;margin-bottom:8px!important;gap:12px}.editor-heading h2{line-height:1.25}.editor-options{padding:0!important;margin:0!important}.input-size-row{margin-bottom:10px}.player-row button.is-loser{color:#6d7780;background:#f2f4f6;border-color:#d2d8dd}
+.editor-heading{min-height:0!important;margin-bottom:12px!important;gap:12px}.editor-heading h2{line-height:1.25}.editor-options{padding:0!important;margin:0!important}.input-size-row{margin-bottom:10px}.player-row button.is-loser{color:#6d7780;background:#f2f4f6;border-color:#d2d8dd}
+
+/* Consistent control borders, spacing and alignment. */
+.input-actions-row>select{border:1px solid #c5cfda;font-weight:400}
+.output-section .output-format-row{display:grid!important;grid-template-columns:minmax(0,1fr);gap:12px}
+.export-actions .primary{justify-content:center}
+.editor-heading{padding-bottom:8px!important;align-items:center}
+.editor-heading h2{flex:0 0 auto;white-space:nowrap;line-height:normal}
+.editor-heading label{min-width:0}
+.editor-options{flex:1;gap:8px 20px}
+.editor-meta-row label:last-child{padding-right:46px;min-width:158px}
+.editor-meta-row #accent{height:40px}
+.editor-meta-row label:last-child .accent-swatch{width:40px;height:40px;top:auto;bottom:0;margin:0!important}
+
+
+
+

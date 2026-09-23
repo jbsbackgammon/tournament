@@ -1,4 +1,4 @@
-import { createTournament, validateTournament, SIZES, TITLE_COLORS, roundLabel, editEntry, advance, seededRounds, sameName } from './model.js';
+import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, advance, seededRounds, sameName } from './model.js';
 import { importTournament } from './parser.js';
 import { renderBracket, dimensions, escapeXml as esc } from './render.js';
 import { exportPng, downloadBlob } from './export.js';
@@ -33,8 +33,9 @@ function syncControls() {
   state.subtitle = 'バックギャモン';
   state.footer = '';
   $('source-size').value = state.size;
-  for (const field of ['edition', 'title', 'accent', 'champion']) $(field).value = state[field];
+  for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
+  $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
@@ -44,7 +45,7 @@ function syncControls() {
   if (!SIZES.includes(view.displaySize) || view.displaySize > state.size) view.displaySize = state.size;
   $('output-size').value = view.displaySize;
   $('format').value = view.format;
-  $('edit-round').innerHTML = state.rounds.map((round, r) => `<option value="${r}">${roundLabel(round.length)}・${round.length}枠</option>`).join('');
+  $('edit-round').innerHTML = state.rounds.map((round, r) => `<option value="${r}">${roundLabel(round.length)}</option>`).join('');
   $('edit-round').value = editRound;
   renderTitles(); renderPlayers(); preview();
 }
@@ -64,12 +65,11 @@ function renderPlayers() {
       const opponent = names[index % 2 ? index - 1 : index + 1];
       const selected = sameName(name, winner);
       const lost = !selected && sameName(opponent, winner);
-      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" placeholder="未定（不戦勝枠はBYE）" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" placeholder="補足" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
+      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
   }
   $('players-editor').innerHTML = cards.join('');
-  $('champion').value = state.champion;
 }
 
 async function mayReplace() {
@@ -97,10 +97,27 @@ $('new-tournament').addEventListener('click', async () => {
   view.displaySize = state.size; editRound = 0; dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
-for (const field of ['edition', 'title', 'accent', 'champion']) $(field).addEventListener('input', event => {
-  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; dirty = true; preview();
+const masterSelect = $('tournament-master');
+masterSelect.innerHTML = TOURNAMENT_MASTERS.map(entry => `<option value="${esc(entry.title)}">${esc(entry.title)}</option>`).join('');
+const masterToggle = $('master-toggle');
+masterToggle.addEventListener('click', () => {
+  masterSelect.hidden = false;
+  masterSelect.focus();
 });
-$('champion').addEventListener('change', renderPlayers);
+document.addEventListener('click', event => {
+  if (!event.target.closest('.title-picker')) masterSelect.hidden = true;
+});
+masterSelect.addEventListener('change', event => {
+  const master = TOURNAMENT_MASTERS.find(entry => entry.title === event.target.value);
+  if (!master) return;
+  state.title = master.title; state.accent = master.accent; dirty = true;
+  $('title').value = state.title; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent;
+  masterSelect.hidden = true;
+  preview();
+});
+for (const field of ['edition', 'title', 'accent']) $(field).addEventListener('input', event => {
+  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; if (field === 'title') masterSelect.value = ''; dirty = true; preview();
+});
 $('format').addEventListener('change', event => { view.format = event.target.value; view.orientation = orientationFor(view.format); preview(); });
 $('output-size').addEventListener('change', event => {
   view.displaySize = Number(event.target.value);
@@ -202,3 +219,4 @@ try {
   }
 } catch { /* The empty manual editor remains usable. */ }
 syncControls();
+

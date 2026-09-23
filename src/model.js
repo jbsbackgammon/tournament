@@ -1,6 +1,18 @@
 export const SIZES = [8, 16, 32, 64];
-export const TITLE_DEFAULTS = ['日本選手権', '盤聖戦', '名人戦', '王位戦', '賽王戦'];
+export const TITLE_DEFAULTS = [
+  { edition: '第54回', title: '日本選手権', winner: '野尾 貴弘' },
+  { edition: '第32期', title: '盤聖戦', winner: '川内 響' },
+  { edition: '第31期', title: '名人戦', winner: '泉 良祐' },
+  { edition: '第32期', title: '王位戦', winner: '斎藤 和弘' },
+  { edition: '第7期', title: '賽王戦', winner: '中村 順子' }
+];
 export const TITLE_COLORS = ['#3c3c3c', '#75092f', '#70700d', '#0c7034', '#12246e'];
+export const TOURNAMENT_MASTERS = [
+  ['日本選手権', '#3C3C3C'], ['盤聖戦', '#6B0D2F'], ['名人戦', '#6B670D'],
+  ['王位戦', '#0D6B2F'], ['賽王戦', '#0D236B'], ['棋聖戦', '#6B230D'],
+  ['女王戦', '#6B0D5B'], ['新鋭戦', '#0D676B'], ['大阪オープン', '#F8B62B'],
+  ['東京オープン', '#009F40'], ['名古屋オープン', '#0C284D']
+].map(([title, accent]) => ({ title, accent }));
 export const cleanName = value => String(value ?? '').replace(/[\u0000-\u001f]/g, ' ').trim();
 export const sameName = (a, b) => !!cleanName(a) && cleanName(a).replace(/[\s\u3000]/g, '') === cleanName(b).replace(/[\s\u3000]/g, '');
 export const roundLabel = count => ({ 2: '決勝', 4: '準決勝', 8: '準々決勝' }[count] || `ベスト${count}`);
@@ -8,11 +20,11 @@ export const roundLabel = count => ({ 2: '決勝', 4: '準決勝', 8: '準々決
 export function createTournament(size = 16) {
   if (!SIZES.includes(size)) throw new Error('対応する枠数は8・16・32・64です。');
   return {
-    version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#70700d',
+    version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
     champion: '', notes: {}, roundPoints: Array(Math.log2(size)).fill(''),
     showNotes: true, showTitles: false, showBottomMargin: false, showLosersGray: true, showByeGray: true,
-    titles: TITLE_DEFAULTS.map(title => ({ title, edition: '', winner: '' })),
+    titles: TITLE_DEFAULTS.map(entry => ({ ...entry })),
     sourceUpdated: ''
   };
 }

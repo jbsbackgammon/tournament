@@ -34,8 +34,8 @@ export function renderBracket(state, options = {}) {
   const line = size === 64 ? 7 : 14;
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
-  const accent = /^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : '#70700d';
-  const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeXml(state.edition + state.title || 'トーナメント表')}">`, `<rect width="${W}" height="${H}" fill="white"/>`, `<g font-family="'Yu Gothic','Meiryo','Hiragino Kaku Gothic ProN',sans-serif" fill="#080808">`];
+  const accent = /^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : '#000000';
+  const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeXml(state.edition + state.title || 'トーナメント表')}">`, `<rect width="${W}" height="${H}" fill="white"/>`, `<g font-family="'Noto Sans JP','Yu Gothic','Meiryo','Hiragino Kaku Gothic ProN',sans-serif" fill="#080808">`];
   const text = (value, x, y, fs, maxWidth, color = '#080808', weight = 700) => {
     const fit = estimateWidth(String(value)) * fs > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
     return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" fill="${color}" font-weight="${weight}"${fit}>${escapeXml(value)}</text>`;
@@ -46,7 +46,11 @@ export function renderBracket(state, options = {}) {
     const dest = nodes[r + 1][Math.floor(i / 2)];
     const d = `M${p.x} ${p.y}H${dest.x}V${dest.y}`;
     paths.push(d);
-    if (rounds[r][i] !== 'BYE' && sameName(rounds[r][i], rounds[r + 1][Math.floor(i / 2)])) winners.push(d);
+    if (rounds[r][i] !== 'BYE' && sameName(rounds[r][i], rounds[r + 1][Math.floor(i / 2)])) {
+      // Through the quarterfinals, show the winner reaching the next match.
+      const next = rounds[r].length >= 8 ? nodes[r + 2][Math.floor(i / 4)] : null;
+      winners.push(d + (next ? `H${next.x}` : ''));
+    }
   }));
   const finalY = nodes.at(-1)[0].y;
   for (const side of [0, 1]) {
@@ -56,7 +60,7 @@ export function renderBracket(state, options = {}) {
     if (sameName(rounds.at(-1)[side], state.champion)) winners.push(d);
   }
   for (const [items, color] of [[paths, '#c0c0c0'], [winners, '#e71920']]) {
-    parts.push(`<g stroke="${color}" stroke-width="${line}" fill="none" stroke-linejoin="miter">${items.map(d => `<path d="${d}"/>`).join('')}</g>`);
+    parts.push(`<g stroke="${color}" stroke-width="${line}" fill="none" stroke-linejoin="miter" stroke-linecap="square">${items.map(d => `<path d="${d}"/>`).join('')}</g>`);
   }
   const eliminated = i => {
     const name = rounds[0][i]; let index = i;
@@ -76,17 +80,27 @@ export function renderBracket(state, options = {}) {
     const fill = name === 'BYE' ? (state.showByeGray ? '#d9d9d9' : '#fff') : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
     const note = notes ? state.notes[name] : '';
     parts.push(`<rect x="${x}" y="${y}" width="${box}" height="${pitch}" fill="${fill}" stroke="#858585" stroke-width="${size === 64 ? 1.5 : 3.5}"/>`);
-    parts.push(text(name || '未定', x + box / 2, p.y + (note ? -font * .03 : font * .35), font, box - 22));
-    if (note) parts.push(text(note, x + box / 2, p.y + font * .72, font * .52, box - 24));
+    if (note) {
+      const noteFont = font * .52;
+      // Divide the space between the frame and the two text rows into three equal gaps.
+      const gap = Math.max(0, (pitch - font - noteFont) / 3);
+      const nameY = y + gap + font * .8;
+      const noteY = nameY + gap + font * .2 + noteFont * .8;
+      parts.push(text(name || '未定', x + box / 2, nameY, font, box - 22));
+      parts.push(text(note, x + box / 2, noteY, noteFont, box - 24));
+    } else {
+      parts.push(text(name || '未定', x + box / 2, p.y + font * .35, font, box - 22));
+    }
   });
   const portrait = H > W;
   const titleWidth = size === 64 ? 300 : 350;
   const titleY = size === 8 ? H * .135 : portrait ? Math.min(H * .09, 155) : H * .13;
   const titleFont = size === 64 ? 66 : 81;
   parts.push(text(state.edition, W / 2, titleY - titleFont * .85, 32, titleWidth));
-  parts.push(text(state.title || '大会名', W / 2, titleY + 15, titleFont, titleWidth));
-  parts.push(`<rect x="${W / 2 - titleWidth / 2}" y="${titleY + 30}" width="${titleWidth}" height="42" fill="${accent}"/>`);
-  parts.push(text(state.subtitle, W / 2, titleY + 59, 27, titleWidth - 30, '#fff'));
+  if (state.title) parts.push(text(state.title, W / 2, titleY + 15, titleFont, titleFont * 7));
+  const subtitleWidth = Math.min(titleWidth, Math.max(150, estimateWidth(state.subtitle) * 27 + 54));
+  parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${titleY + 30}" width="${subtitleWidth}" height="42" fill="${accent}"/>`);
+  parts.push(text(state.subtitle, W / 2, titleY + 59, 27, subtitleWidth - 24, '#fff'));
   const championY = Math.max(titleY + 115, finalY - (portrait ? H * .16 : 102));
   parts.push(text('優勝', W / 2, championY, 26, 205));
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
