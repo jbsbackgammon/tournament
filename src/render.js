@@ -9,11 +9,11 @@ export function dimensions(format, orientation = 'landscape') {
 }
 const estimateWidth = str => [...str].reduce((sum, c) => sum + (/[\x20-\x7e]/.test(c) ? .6 : 1), 0);
 
-export function bracketGeometry(size, H, showTitles = false) {
+export function bracketGeometry(size, H, showTitles = false, showBottomMargin = false) {
   const W = 1440, margin = 70, box = size === 64 ? 244 : 265;
   const levels = Math.log2(size), half = size / 2;
   const top = size === 8 ? H * .30 : size === 64 ? H * .045 : H * .145;
-  const bottom = H * (showTitles ? .79 : (state.showBottomMargin ? .78 : .90));
+  const bottom = H * (showTitles ? .79 : (showBottomMargin ? .78 : .90));
   const pitch = (bottom - top) / half;
   const edge = margin + box, centerGap = 212;
   const step = (W / 2 - centerGap / 2 - edge) / (levels - 1);
@@ -30,7 +30,7 @@ export function renderBracket(state, options = {}) {
   const H = height / width * 1440;
   const { start } = displayRounds(state, size);
   const rounds = seededRounds(state).slice(start);
-  const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles);
+  const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles, state.showBottomMargin);
   const line = size === 64 ? 7 : 14;
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
