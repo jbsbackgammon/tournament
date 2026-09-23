@@ -9,11 +9,21 @@ export function dimensions(format, orientation = 'landscape') {
 }
 const estimateWidth = str => [...str].reduce((sum, c) => sum + (/[\x20-\x7e]/.test(c) ? .6 : 1), 0);
 
-export function bracketGeometry(size, H, showTitles = false, showBottomMargin = false) {
+export function bracketGeometry(size, H, showTitles = false, showBottomMargin = false, outputWidth = 1920) {
   const W = 1440, margin = 70, box = size === 64 ? 244 : 265;
   const levels = Math.log2(size), half = size / 2;
-  const top = size === 8 ? H * .30 : size === 64 ? H * .045 : H * .145;
-  const bottom = H * (showTitles ? .79 : (showBottomMargin ? .78 : .90));
+  // Keep the image edge and the bracket position consistent in physical pixels
+  // across all output sizes: 40px top blank + 160px header space, and 40px
+  // bottom blank (or 120px when the optional bottom margin is enabled).
+  const pxScale = outputWidth / W;
+  const outputScale = outputWidth / 1920;
+  const top = (160 * outputScale) / pxScale;
+  const imageBottomGap = (40 * outputScale) / pxScale;
+  const titleGap = (20 * outputScale) / pxScale;
+  const titleHeight = 151.875 / (1920 / 1440);
+  const bottom = (showTitles || showBottomMargin)
+    ? H - imageBottomGap - titleHeight - titleGap
+    : H - imageBottomGap;
   const pitch = (bottom - top) / half;
   const edge = margin + box, centerGap = 212;
   const step = (W / 2 - centerGap / 2 - edge) / (levels - 1);
@@ -30,7 +40,7 @@ export function renderBracket(state, options = {}) {
   const H = height / width * 1440;
   const { start } = displayRounds(state, size);
   const rounds = seededRounds(state).slice(start);
-  const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles, state.showBottomMargin);
+  const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles, state.showBottomMargin, width);
   const line = size === 64 ? 7 : 14;
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
@@ -94,23 +104,38 @@ export function renderBracket(state, options = {}) {
   });
   const portrait = H > W;
   const titleWidth = size === 64 ? 300 : 350;
-  const titleY = size === 8 ? H * .135 : portrait ? Math.min(H * .09, 155) : H * .13;
-  const titleFont = size === 64 ? 66 : 81;
-  parts.push(text(state.edition, W / 2, titleY - titleFont * .85, 32, titleWidth));
-  if (state.title) parts.push(text(state.title, W / 2, titleY + 15, titleFont, titleFont * 7));
-  const subtitleWidth = Math.min(titleWidth, Math.max(150, estimateWidth(state.subtitle) * 27 + 54));
-  parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${titleY + 30}" width="${subtitleWidth}" height="42" fill="${accent}"/>`);
-  parts.push(text(state.subtitle, W / 2, titleY + 59, 27, subtitleWidth - 24, '#fff'));
-  const championY = Math.max(titleY + 115, finalY - (portrait ? H * .16 : 102));
+  const pxScale = width / W;
+  const outputScale = width / 1920;
+  // Keep the header inside the fixed 40px top margin + 160px header area.
+  // The edition position is fixed independently; title and color band follow
+  // it without reaching the bracket's 200px physical top edge.
+  const titleY = (215 * outputScale) / pxScale;
+  const titleFont = (120 * outputScale) / pxScale;
+  const imageBottomGap = (40 * outputScale) / pxScale;
+  // The edition label starts 40 physical pixels below the image edge for
+  // every output size and orientation.
+  const editionFont = (50 * outputScale) / pxScale;
+  const editionY = (40 * outputScale) / pxScale + editionFont;
+  parts.push(text(state.edition, W / 2, editionY, editionFont, titleWidth));
+  if (state.title) parts.push(text(state.title, W / 2, titleY, titleFont, titleFont * 6));
+  const subtitleFont = (50 * outputScale) / pxScale;
+  const subtitleWidth = Math.min(titleWidth, Math.max(150 / pxScale, estimateWidth(state.subtitle) * subtitleFont * .9 + 48 / pxScale));
+  const subtitleHeight = (60 * outputScale) / pxScale;
+  const subtitleY = titleY + (20 * outputScale) / pxScale;
+  parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${subtitleY}" width="${subtitleWidth}" height="${subtitleHeight}" fill="${accent}"/>`);
+  parts.push(text(state.subtitle, W / 2, subtitleY + (46 * outputScale) / pxScale, subtitleFont, subtitleWidth - (20 * outputScale) / pxScale, '#fff'));
+  const championY = Math.max(titleY + 115, finalY - (portrait ? H * .10 : 102));
   parts.push(text('優勝', W / 2, championY, 26, 205));
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
   const logoW = portrait ? 205 : 178, logoH = logoW * 1100 / 1830;
   const logoY = Math.max(finalY + 50, bottom - logoH - 14);
   parts.push(`<image href="${logoData}" x="${W / 2 - logoW / 2}" y="${logoY}" width="${logoW}" height="${logoH}"/>`);
   if (state.showTitles) {
-    const y = H * .835, h = H * .125, col = (W - margin * 2) / 5, pad = 7;
+    const h = 151.875 / (1920 / 1440);
+    const y = H - imageBottomGap - h;
+    const col = (W - margin * 2) / 5, pad = 7;
     state.titles.forEach((entry, i) => {
-      const x = margin + i * col, w = col - pad;
+      const x = margin + i * col, w = i === 4 ? col : col - pad;
       parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${TITLE_COLORS[i]}"/>`);
       parts.push(text(entry.edition, x + w / 2, y + h * .20, Math.min(19, h * .17), w - 20, 'white'));
       parts.push(text(entry.title, x + w / 2, y + h * .44, Math.min(28, h * .25), w - 20, 'white'));

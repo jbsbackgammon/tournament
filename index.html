@@ -15,12 +15,12 @@
       <section>
         <h2>入力</h2><div class="input-grid"><div>
         <div class="row input-actions-row input-size-row"><select aria-label="枠数" id="source-size"><option value="8">8枠</option><option value="16" selected>16枠</option><option value="32">32枠</option><option value="64">64枠</option></select><button id="new-tournament">新規作成</button></div>
-        <textarea aria-label="eJBSソースを貼り付け" id="source-text" rows="3" spellcheck="false"></textarea>
+        <textarea aria-label="eJBSソースを貼り付け" id="source-text" rows="3" spellcheck="false" placeholder="eJBSコード貼付"></textarea>
         <div class="row input-actions-row"><button class="dark" id="import-source">eJBS取込</button><label class="button" for="open-json">JSON取込</label><input hidden type="file" id="open-json" accept=".json"><button id="history-load">履歴呼出</button></div>
       </div></div>
       </section>
       <section class="output-section"><h2>出力</h2><div class="output-grid">
-        <div class="row output-format-row"><select aria-label="出力枠数" id="output-size"><option value="8">8枠</option><option value="16" selected>16枠</option><option value="32">32枠</option><option value="64">64枠</option></select><select aria-label="出力サイズ" id="format"><option value="hd">1920 × 1080 px（WEB横）</option><option value="a4">2480 × 3508 px（A4縦）</option><option value="a5">2480 × 1748 px（A5横）</option></select></div>
+        <div class="row output-format-row"><select aria-label="出力枠数" id="output-size"><option value="8">8枠</option><option value="16" selected>16枠</option><option value="32">32枠</option><option value="64">64枠</option></select><select aria-label="出力サイズ" id="format"><option value="hd">1920 × 1080 px（WEB横）</option><option value="a5">2480 × 1748 px（A5横）</option><option value="a4">2480 × 3508 px（A4縦）</option></select></div>
         </div><div id="dimensions" class="help"></div>
         <div class="export-actions"><button id="export-png" class="primary">PNG出力</button><button id="save-json">JSON出力</button></div>
       </section>
@@ -39,7 +39,7 @@
   </main>
   <dialog id="replace-dialog"><h2>現在の大会データを置き換えますか？</h2><p>必要な場合はキャンセルして「大会データを保存」してください。</p><form method="dialog"><button value="cancel">キャンセル</button><button value="replace" class="dark">置き換える</button></form></dialog>
   <dialog id="history-dialog"><h2>履歴呼出</h2><select id="history-select" size="8"></select><form method="dialog"><button value="cancel">キャンセル</button><button value="load" class="dark">呼び出す</button></form></dialog>
-  <script type="module" src="./src/app.js?v=202609240600"></script>
+  <script type="module" src="./src/app.js?v=202609240601"></script>
 </body>
 </html>
 

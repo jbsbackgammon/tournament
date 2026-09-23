@@ -8,6 +8,13 @@ let state = createTournament(16);
 let view = { displaySize: 16, format: 'hd', orientation: 'landscape' };
 let editRound = 0, dirty = false;
 const orientationFor = format => format === 'a4' ? 'portrait' : 'landscape';
+const autoFormatForSize = size => {
+  if (Number(size) === 64) { view.format = 'a4'; view.orientation = 'portrait'; }
+  else { view.format = 'hd'; view.orientation = 'landscape'; }
+};
+const syncOutputOptions = limit => {
+  for (const option of $('output-size').options) option.hidden = Number(option.value) > Number(limit);
+};
 let noticeTimer;
 const note = (message, error = false) => {
   clearTimeout(noticeTimer);
@@ -33,12 +40,15 @@ function syncControls() {
   state.subtitle = 'バックギャモン';
   state.footer = '';
   $('source-size').value = state.size;
+  syncOutputOptions(state.size);
   for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
   $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
+  $('show-titles').disabled = state.showBottomMargin;
+  $('show-bottom-margin').disabled = state.showTitles;
   $('show-losers-gray').checked = state.showLosersGray;
   $('show-bye-gray').checked = state.showByeGray;
   $('titles-editor').hidden = !state.showTitles;
@@ -84,6 +94,7 @@ async function importText(text, sample = false) {
     const result = importTournament(text, Number($('source-size').value));
     if (!await mayReplace()) return;
     state = result.state;
+    autoFormatForSize(state.size);
     view.displaySize = state.size;
     editRound = 0; dirty = !sample;
     syncControls(); note(`${state.size}枠を取り込みました。`);
@@ -91,6 +102,15 @@ async function importText(text, sample = false) {
 }
 
 $('import-source').addEventListener('click', () => importText($('source-text').value));
+$('source-size').addEventListener('change', event => {
+  const size = Number(event.target.value);
+  syncOutputOptions(size);
+  view.displaySize = size;
+  $('output-size').value = size;
+  autoFormatForSize(size);
+  $('format').value = view.format;
+  preview();
+});
 $('new-tournament').addEventListener('click', async () => {
   if (!await mayReplace()) return;
   state = createTournament(Number($('source-size').value));
@@ -127,7 +147,8 @@ $('output-size').addEventListener('change', event => {
 $('show-notes').addEventListener('change', event => { state.showNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
 $('show-losers-gray').addEventListener('change', event => { state.showLosersGray = event.target.checked; dirty = true; preview(); });
 $('show-bye-gray').addEventListener('change', event => { state.showByeGray = event.target.checked; dirty = true; preview(); });
-$('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; dirty = true; $('titles-editor').hidden = !state.showTitles; preview(); });
+$('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; if (state.showTitles) state.showBottomMargin = false; dirty = true; $('titles-editor').hidden = !state.showTitles; syncControls(); });
+$('show-bottom-margin').addEventListener('change', event => { state.showBottomMargin = event.target.checked; if (state.showBottomMargin) state.showTitles = false; dirty = true; $('titles-editor').hidden = true; syncControls(); });
 $('titles-editor').addEventListener('input', event => {
   const { ti, tf } = event.target.dataset;
   if (ti === undefined) return;
@@ -180,7 +201,7 @@ $('history-dialog').addEventListener('close', async () => {
   if ($('history-dialog').returnValue !== 'load') return;
   const item = readHistory()[Number($('history-select').value)];
   if (!item || !await mayReplace()) return;
-  state = validateTournament(item.state); view = item.view; editRound = 0; dirty = false; syncControls(); note('履歴を呼び出しました。');
+  state = validateTournament(item.state); view = item.view; autoFormatForSize(state.size); editRound = 0; dirty = false; syncControls(); note('履歴を呼び出しました。');
 });
 $('open-json').addEventListener('change', async event => {
   const file = event.target.files[0];
@@ -191,6 +212,7 @@ $('open-json').addEventListener('change', async event => {
     if (!await mayReplace()) return;
     state = next;
     view = { displaySize: SIZES.includes(raw.view?.displaySize) && raw.view.displaySize <= state.size ? raw.view.displaySize : state.size, format: ['a4', 'a5', 'hd'].includes(raw.view?.format) ? raw.view.format : 'hd', orientation: raw.view?.orientation === 'portrait' ? 'portrait' : 'landscape' };
+    autoFormatForSize(state.size);
     editRound = Math.log2(state.size / view.displaySize); dirty = false;
     syncControls(); note('大会データを読み込みました。');
   } catch (error) { note(`読み込めませんでした。${error.message}`, true); }
@@ -204,7 +226,8 @@ $('export-png').addEventListener('click', async () => {
     const blob = await exportPng(snapshot, settings);
     const { width, height } = dimensions(settings.format, settings.orientation);
     downloadBlob(blob, `tournament_${safeFilename(snapshot.edition + snapshot.title)}_${settings.displaySize}_${width}x${height}.png`);
-    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${snapshot.edition || ''}${snapshot.title || '大会'}・${new Date().toLocaleString('ja-JP')}`, state: snapshot, view: settings });
+    const outputTime = new Date().toLocaleString('ja-JP');
+    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${outputTime}・${snapshot.edition || ''}・${snapshot.title || '大会'}`, state: snapshot, view: settings });
     note('PNGを書き出しました。');
   } catch (error) { note(`PNGを書き出せませんでした。${error.message}`, true); }
   finally { $('export-png').disabled = false; }
@@ -218,5 +241,6 @@ try {
     state = importTournament(await response.text()).state;
   }
 } catch { /* The empty manual editor remains usable. */ }
+autoFormatForSize(state.size);
 syncControls();
 

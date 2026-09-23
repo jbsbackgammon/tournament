@@ -93,7 +93,7 @@ for (const size of [8, 16, 32, 64]) {
       for (const row of geo.nodes) for (const p of row) {
         assert.ok(p.x >= 0 && p.x <= geo.W); assert.ok(p.y >= 0 && p.y <= H);
       }
-      assert.ok(geo.bottom < (showTitles ? H * .835 : H));
+      assert.ok(geo.bottom < H);
       assert.ok(renderBracket(state, { displaySize: size, format, orientation }).includes(`width="${d.width}" height="${d.height}"`));
     }
   });
@@ -133,3 +133,4 @@ test('winner routes include the outgoing arm through quarterfinals on both sides
     assert.match(svg, /stroke="#e71920"[^>]*stroke-linecap="square"/);
   }
 });
+

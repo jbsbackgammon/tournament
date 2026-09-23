@@ -21,8 +21,8 @@ details{margin-top:14px}summary{cursor:pointer;font-size:.875rem;font-weight:650
 .samples{display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:12px}.samples button{font-size:.75rem;padding:5px 9px;min-height:30px}
 .dark{background:#203950;color:white;border-color:#203950}.dark:hover{background:#315775;color:white}
 .primary{background:#203950;color:white;border-color:#203950}.primary:hover{background:#315775;color:white;border-color:#315775}
-.controls #source-text{display:block;width:100%;margin-bottom:10px}
-#history-select{width:100%;margin-top:8px}
+.controls #source-text{display:block;width:100%;margin-bottom:10px}.controls #source-text::placeholder{color:#9aa3ad;opacity:1}
+#history-select{width:100%;margin-top:8px;min-height:260px}
 .full{width:100%;min-height:48px;justify-content:space-between}.check{display:flex;align-items:center;gap:9px}.check input{margin:0}
 .editor-heading{display:flex;align-items:center;gap:20px;margin-bottom:12px;border-bottom:3px solid #2d587b}.editor-heading h2{margin:0;padding-bottom:8px;border:0;flex:1}.editor-heading label{margin:0;min-width:135px}
 .players-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}.match-card{border:1px solid #dce3ea;border-radius:5px;padding:10px}
@@ -84,3 +84,5 @@ body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo
 
 
 
+
+#history-dialog{width:min(760px,calc(100vw - 32px));max-width:760px}
