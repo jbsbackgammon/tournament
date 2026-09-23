@@ -1,0 +1,9 @@
+{
+  "name": "tournament",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "eJBSの対戦表を編集し、印刷・配信用PNGを生成するツール",
+  "scripts": { "start": "node server.js", "test": "node --test", "build": "node scripts/build.js" },
+  "engines": { "node": ">=22" }
+}
