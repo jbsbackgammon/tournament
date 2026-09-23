@@ -20,7 +20,7 @@
       </div></div>
       </section>
       <section class="output-section"><h2>出力</h2><div class="output-grid">
-        <div class="row output-format-row"><select aria-label="出力枠数" id="output-size"><option value="8">8枠</option><option value="16">16枠</option><option value="32">32枠</option><option value="64">64枠</option></select><select aria-label="出力サイズ" id="format"><option value="hd">1920 × 1080 px（横）</option><option value="a4">2480 × 3508 px（A4縦）</option><option value="a5">2480 × 1748 px（A5横）</option></select></div>
+        <div class="row output-format-row"><select aria-label="出力枠数" id="output-size"><option value="8">8枠</option><option value="16" selected>16枠</option><option value="32">32枠</option><option value="64">64枠</option></select><select aria-label="出力サイズ" id="format"><option value="hd">1920 × 1080 px（WEB横）</option><option value="a4">2480 × 3508 px（A4縦）</option><option value="a5">2480 × 1748 px（A5横）</option></select></div>
         </div><div id="dimensions" class="help"></div>
         <div class="export-actions"><button id="export-png" class="primary">PNG出力</button><button id="save-json">JSON出力</button></div>
       </section>
@@ -31,7 +31,7 @@
     <div class="editing-layout">
       <section class="editor-section">
         <div class="editor-heading"><h2>編集</h2><div class="editor-options"><label class="check"><input id="show-notes" type="checkbox" checked>選手補足有</label><label class="check"><input id="show-losers-gray" type="checkbox" checked>敗者非活性</label><label class="check"><input id="show-bye-gray" type="checkbox" checked>BYE非活性</label><label class="check"><input id="show-titles" type="checkbox">五大タイトル表示</label><label class="check"><input id="show-bottom-margin" type="checkbox">下余白有</label></div></div>
-        <div class="editor-meta-row"><label>編集ラウンド<select id="edit-round"></select></label><label class="edition">回次等<input id="edition" maxlength="40"></label><label>大会名<input id="title" maxlength="100"></label><label>優勝者<input id="champion" maxlength="100"></label><label>帯色<input id="accent" type="text" inputmode="text" maxlength="7" aria-label="帯色カラーコード"><span class="accent-swatch" id="accent-swatch"></span></label></div>
+        <div class="editor-meta-row"><label>編集ラウンド<select id="edit-round"></select></label><label class="edition">回次等<input id="edition" maxlength="40"></label><label>大会名<input id="title" maxlength="100"></label><label>帯色<input id="accent" type="text" inputmode="text" maxlength="7" aria-label="帯色カラーコード"><span class="accent-swatch" id="accent-swatch"></span></label></div>
         <div id="players-editor" class="players-grid"></div>
         <div id="titles-editor" hidden></div>
       </section>
@@ -39,7 +39,7 @@
   </main>
   <dialog id="replace-dialog"><h2>現在の大会データを置き換えますか？</h2><p>必要な場合はキャンセルして「大会データを保存」してください。</p><form method="dialog"><button value="cancel">キャンセル</button><button value="replace" class="dark">置き換える</button></form></dialog>
   <dialog id="history-dialog"><h2>履歴呼出</h2><select id="history-select" size="8"></select><form method="dialog"><button value="cancel">キャンセル</button><button value="load" class="dark">呼び出す</button></form></dialog>
-  <script type="module" src="./src/app.js?v=202609240400"></script>
+  <script type="module" src="./src/app.js?v=202609240500"></script>
 </body>
 </html>
 
