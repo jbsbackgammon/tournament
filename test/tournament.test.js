@@ -66,6 +66,10 @@ test('plain text imports names, tabs and chooses sufficient slots', () => {
   assert.equal(result.state.notes['選手A'], '予選A組1位');
   assert.equal(importTournament(Array(33).fill('名').join('\n'), 8).state.size, 64);
 });
+test('eJBS player names discard slash metadata', () => {
+  const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(',') };
+  assert.equal(importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state.rounds[0][0], '選手A');
+});
 test('saved JSON roundtrip and malformed JSON validation', async () => {
   const state = await load(16); state.notes['川島 颯'] = '予選B組1位'; state.showTitles = true;
   assert.deepEqual(validateTournament(JSON.parse(JSON.stringify(state))), state);

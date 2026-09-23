@@ -1,5 +1,8 @@
 import { createTournament, cleanName, SIZES } from './model.js';
 
+// eJBS appends internal metadata after a slash in some player fields.
+const playerName = value => cleanName(value).split('/')[0].trim();
+
 // Read the callback's JSON object without evaluating any pasted JavaScript.
 export function extractCallback(text) {
   const marker = /\bgetTourneyCallback\s*\(/g.exec(text);
@@ -35,7 +38,7 @@ export function importTournament(text, requestedSize = 16) {
   if (data) {
     const size = Number(data.players);
     if (!SIZES.includes(size) || typeof data.data !== 'string') throw new Error('8・16・32・64枠のeJBSデータを指定してください。');
-    const entries = data.data.split(',').map(cleanName);
+    const entries = data.data.split(',').map(playerName);
     const expected = size * 2 - 2;
     // eJBS sometimes leaves trailing empty fields after the last pair.
     if (entries.length < expected || entries.slice(expected).some(Boolean)) throw new Error(`対戦データ数が${size}枠の形式と一致しません。`);
