@@ -46,7 +46,11 @@ export function renderBracket(state, options = {}) {
     const dest = nodes[r + 1][Math.floor(i / 2)];
     const d = `M${p.x} ${p.y}H${dest.x}V${dest.y}`;
     paths.push(d);
-    if (rounds[r][i] !== 'BYE' && sameName(rounds[r][i], rounds[r + 1][Math.floor(i / 2)])) winners.push(d);
+    if (rounds[r][i] !== 'BYE' && sameName(rounds[r][i], rounds[r + 1][Math.floor(i / 2)])) {
+      // Through the quarterfinals, show the winner reaching the next match.
+      const next = rounds[r].length >= 8 ? nodes[r + 2][Math.floor(i / 4)] : null;
+      winners.push(d + (next ? `H${next.x}` : ''));
+    }
   }));
   const finalY = nodes.at(-1)[0].y;
   for (const side of [0, 1]) {
@@ -56,7 +60,7 @@ export function renderBracket(state, options = {}) {
     if (sameName(rounds.at(-1)[side], state.champion)) winners.push(d);
   }
   for (const [items, color] of [[paths, '#c0c0c0'], [winners, '#e71920']]) {
-    parts.push(`<g stroke="${color}" stroke-width="${line}" fill="none" stroke-linejoin="miter">${items.map(d => `<path d="${d}"/>`).join('')}</g>`);
+    parts.push(`<g stroke="${color}" stroke-width="${line}" fill="none" stroke-linejoin="miter" stroke-linecap="square">${items.map(d => `<path d="${d}"/>`).join('')}</g>`);
   }
   const eliminated = i => {
     const name = rounds[0][i]; let index = i;

@@ -44,7 +44,7 @@ function syncControls() {
   if (!SIZES.includes(view.displaySize) || view.displaySize > state.size) view.displaySize = state.size;
   $('output-size').value = view.displaySize;
   $('format').value = view.format;
-  $('edit-round').innerHTML = state.rounds.map((round, r) => `<option value="${r}">${roundLabel(round.length)}・${round.length}枠</option>`).join('');
+  $('edit-round').innerHTML = state.rounds.map((round, r) => `<option value="${r}">${roundLabel(round.length)}</option>`).join('');
   $('edit-round').value = editRound;
   renderTitles(); renderPlayers(); preview();
 }
@@ -64,7 +64,7 @@ function renderPlayers() {
       const opponent = names[index % 2 ? index - 1 : index + 1];
       const selected = sameName(name, winner);
       const lost = !selected && sameName(opponent, winner);
-      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" placeholder="未定（不戦勝枠はBYE）" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" placeholder="補足" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
+      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
   }
