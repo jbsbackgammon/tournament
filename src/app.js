@@ -1,4 +1,4 @@
-import { createTournament, validateTournament, SIZES, TITLE_COLORS, roundLabel, editEntry, advance, seededRounds, sameName } from './model.js';
+import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, advance, seededRounds, sameName } from './model.js';
 import { importTournament } from './parser.js';
 import { renderBracket, dimensions, escapeXml as esc } from './render.js';
 import { exportPng, downloadBlob } from './export.js';
@@ -35,6 +35,7 @@ function syncControls() {
   $('source-size').value = state.size;
   for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
+  $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
@@ -96,8 +97,26 @@ $('new-tournament').addEventListener('click', async () => {
   view.displaySize = state.size; editRound = 0; dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
+const masterSelect = $('tournament-master');
+masterSelect.innerHTML = TOURNAMENT_MASTERS.map(entry => `<option value="${esc(entry.title)}">${esc(entry.title)}</option>`).join('');
+const masterToggle = $('master-toggle');
+masterToggle.addEventListener('click', () => {
+  masterSelect.hidden = false;
+  masterSelect.focus();
+});
+document.addEventListener('click', event => {
+  if (!event.target.closest('.title-picker')) masterSelect.hidden = true;
+});
+masterSelect.addEventListener('change', event => {
+  const master = TOURNAMENT_MASTERS.find(entry => entry.title === event.target.value);
+  if (!master) return;
+  state.title = master.title; state.accent = master.accent; dirty = true;
+  $('title').value = state.title; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent;
+  masterSelect.hidden = true;
+  preview();
+});
 for (const field of ['edition', 'title', 'accent']) $(field).addEventListener('input', event => {
-  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; dirty = true; preview();
+  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; if (field === 'title') masterSelect.value = ''; dirty = true; preview();
 });
 $('format').addEventListener('change', event => { view.format = event.target.value; view.orientation = orientationFor(view.format); preview(); });
 $('output-size').addEventListener('change', event => {
@@ -200,3 +219,4 @@ try {
   }
 } catch { /* The empty manual editor remains usable. */ }
 syncControls();
+
