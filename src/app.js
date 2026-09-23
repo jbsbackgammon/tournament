@@ -33,7 +33,7 @@ function syncControls() {
   state.subtitle = 'バックギャモン';
   state.footer = '';
   $('source-size').value = state.size;
-  for (const field of ['edition', 'title', 'accent', 'champion']) $(field).value = state[field];
+  for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
@@ -69,7 +69,6 @@ function renderPlayers() {
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
   }
   $('players-editor').innerHTML = cards.join('');
-  $('champion').value = state.champion;
 }
 
 async function mayReplace() {
@@ -97,10 +96,9 @@ $('new-tournament').addEventListener('click', async () => {
   view.displaySize = state.size; editRound = 0; dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
-for (const field of ['edition', 'title', 'accent', 'champion']) $(field).addEventListener('input', event => {
+for (const field of ['edition', 'title', 'accent']) $(field).addEventListener('input', event => {
   state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; dirty = true; preview();
 });
-$('champion').addEventListener('change', renderPlayers);
 $('format').addEventListener('change', event => { view.format = event.target.value; view.orientation = orientationFor(view.format); preview(); });
 $('output-size').addEventListener('change', event => {
   view.displaySize = Number(event.target.value);
