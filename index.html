@@ -9,22 +9,20 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <header class="app-header">
-    <a class="brand" href="./"><img src="./favicon.svg" alt="" width="32" height="32">Tournament <span>トーナメント表作成</span></a>
-    <div class="header-actions"><button id="save-json">大会データを保存</button><label class="button" for="open-json">データを開く</label><input hidden type="file" id="open-json" accept=".json"></div>
-  </header>
   <main class="workspace">
+    <section class="preview-surface" aria-label="トーナメント表"><div id="preview"></div></section>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <div class="editing-layout">
     <aside class="controls" aria-label="大会の設定">
       <section>
-        <h1>トーナメントを作成</h1>
-        <p class="muted">eJBSから取り込むか、選手名を直接入力。</p>
+        <h2>入力</h2>
+        <div class="data-actions"><button id="save-json">大会データを保存</button><label class="button" for="open-json">データを開く</label><input hidden type="file" id="open-json" accept=".json"></div>
         <div class="row"><label>元の枠数<select id="source-size"><option>8</option><option selected>16</option><option>32</option><option>64</option></select></label><button id="new-tournament">新規作成</button></div>
         <details open>
           <summary>eJBS・選手名を取り込む</summary>
-          <label for="source-text" class="help">ページソース、または1行1名の名簿。<br>名簿の補足はタブ区切りで入力できます。</label>
-          <textarea id="source-text" rows="5" placeholder="getTourneyCallback({...});&#10;または&#10;選手名［タブ］補足情報" spellcheck="false"></textarea>
+          <textarea aria-label="eJBSソース・選手名" id="source-text" rows="5" placeholder="eJBSソース・選手名" spellcheck="false"></textarea>
           <div class="row"><button class="dark" id="import-source">取り込む</button><label class="button" for="source-file">.txtを選択</label><input hidden type="file" id="source-file" accept=".txt,.html,.htm,text/plain,text/html"></div>
-          <div class="samples"><span>共有例を試す</span><button id="sample-64">名人戦 64枠</button><button id="sample-16">新鋭戦 16枠</button></div>
+          <div class="samples"><button id="sample-64">名人戦 64枠</button><button id="sample-16">新鋭戦 16枠</button></div>
         </details>
       </section>
       <section>
@@ -37,9 +35,7 @@
       <section>
         <h2>表示・書き出し</h2>
         <label>表示する枠数<select id="display-size"></select></label>
-        <p class="help" id="display-help"></p>
         <label class="check"><input id="show-notes" type="checkbox" checked>名前の下に補足を表示</label>
-        <p class="help" id="notes-help">64枠表示では補足を省略します。</p>
         <div class="row"><label>PNGサイズ<select id="format"><option value="hd">1920 × 1080 px</option><option value="a4">A4（300dpi）</option><option value="a5">A5（300dpi）</option></select></label><label class="edition">向き<select id="orientation"><option value="landscape">横</option><option value="portrait">縦</option></select></label></div>
         <p class="help" id="dimensions"></p>
         <button id="export-png" class="primary full">PNGを書き出す <span>↓</span></button>
@@ -48,17 +44,11 @@
         <label class="check"><input id="show-titles" type="checkbox">5大タイトル優勝者を表示</label>
         <div id="titles-editor" hidden></div>
       </section>
-      <p class="local-note">入力データはブラウザ内で処理します。<br>続けて編集する場合は大会データを保存してください。</p>
     </aside>
-    <div class="stage">
-      <div class="stage-header"><div><span class="eyebrow">PREVIEW</span><h2 id="preview-title">トーナメント表</h2></div><span class="badge" id="draw-badge">16枠</span></div>
-      <div id="notice" role="status" aria-live="polite"></div>
-      <div class="preview-surface"><div id="preview"></div></div>
       <section class="editor-section">
-        <div class="editor-heading"><div><h2>選手・勝ち上がりを編集</h2><p class="muted">名前と補足を入力。「勝者」で次のラウンドへ進みます。</p></div><label>編集ラウンド<select id="edit-round"></select></label></div>
-        <p id="seed-info" class="help"></p>
+        <div class="editor-heading"><div><h2>選手・勝ち上がりを編集</h2></div><label>編集ラウンド<select id="edit-round"></select></label></div>
         <div id="players-editor" class="players-grid"></div>
-        <label class="champion-field">優勝者<input id="champion" maxlength="100" placeholder="決勝の勝者を選択、または直接入力"></label>
+        <label class="champion-field">優勝者<input id="champion" maxlength="100" placeholder="優勝者名"></label>
       </section>
     </div>
   </main>

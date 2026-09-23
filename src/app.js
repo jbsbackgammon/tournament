@@ -7,19 +7,21 @@ const $ = id => document.getElementById(id);
 let state = createTournament(16);
 let view = { displaySize: 16, format: 'hd', orientation: 'landscape' };
 let editRound = 0, dirty = false;
-const note = (message, error = false) => { $('notice').textContent = message; $('notice').classList.toggle('error', error); };
+let noticeTimer;
+const note = (message, error = false) => {
+  clearTimeout(noticeTimer);
+  $('notice').textContent = message;
+  $('notice').classList.toggle('error', error);
+  if (!error) noticeTimer = setTimeout(() => { $('notice').textContent = ''; }, 4000);
+};
 const safeFilename = name => (name || 'tournament').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 100);
 
 function preview() {
   $('preview').innerHTML = renderBracket(state, view);
-  $('preview-title').textContent = state.edition + state.title || 'トーナメント表';
-  $('draw-badge').textContent = `${view.displaySize}枠${view.displaySize < state.size ? ` / 元データ${state.size}枠` : ''}`;
   const { width, height, dpi } = dimensions(view.format, view.orientation);
   $('dimensions').textContent = `${width.toLocaleString()} × ${height.toLocaleString()} px${view.format === 'hd' ? '' : `・${dpi}dpi`}`;
   $('orientation').disabled = view.format === 'hd';
   $('show-notes').disabled = view.displaySize === 64;
-  $('notes-help').textContent = view.displaySize === 64 ? '64枠では補足を非表示にします。入力済みの内容は保持されます。' : '名前の下に補足を小さく表示できます。';
-  $('display-help').textContent = view.displaySize < state.size ? `元の${state.size}枠を保持し、ベスト${view.displaySize}以降だけを表示します。` : '対戦表全体を表示しています。';
 }
 
 function syncControls() {
@@ -53,7 +55,6 @@ function renderPlayers() {
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
   }
   $('players-editor').innerHTML = cards.join('');
-  $('seed-info').textContent = 'BYEは不戦勝枠です。eJBSの途中ラウンドにある選手は空の枝へ補完します。同名の複数エントリーは保持します。';
   $('champion').value = state.champion;
 }
 
@@ -71,7 +72,7 @@ async function importText(text, sample = false) {
     state = result.state;
     view.displaySize = state.size;
     editRound = 0; dirty = !sample;
-    syncControls(); note(result.message + (sample ? ' 共有例を表示しています。' : ''));
+    syncControls(); note(`${state.size}枠を取り込みました。`);
   } catch (error) { note(error.message, true); }
 }
 
@@ -97,7 +98,7 @@ $('new-tournament').addEventListener('click', async () => {
   if (!await mayReplace()) return;
   state = createTournament(Number($('source-size').value));
   view.displaySize = state.size; editRound = 0; dirty = true;
-  syncControls(); note(`${state.size}枠の大会を作成しました。下の編集画面から選手名を入力できます。`);
+  syncControls(); note(`${state.size}枠を作成しました。`);
 });
 for (const field of ['edition', 'title', 'subtitle', 'footer', 'accent', 'champion']) $(field).addEventListener('input', event => {
   state[field] = event.target.value; dirty = true; preview();
@@ -183,7 +184,6 @@ try {
   const response = await fetch('./fixtures/ejbs-16.html');
   if (response.ok) {
     state = importTournament(await response.text()).state;
-    note('共有例「第15回新鋭戦」を表示しています。取り込み・新規作成から編集を始められます。');
   }
 } catch { /* The empty manual editor remains usable. */ }
 syncControls();
