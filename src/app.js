@@ -50,7 +50,6 @@ function syncControls() {
   $('show-titles').disabled = state.showBottomMargin;
   $('show-bottom-margin').disabled = state.showTitles;
   $('show-losers-gray').checked = state.showLosersGray;
-  $('show-bye-gray').checked = state.showByeGray;
   $('titles-editor').hidden = !state.showTitles;
   if (!SIZES.includes(view.displaySize) || view.displaySize > state.size) view.displaySize = state.size;
   $('output-size').value = view.displaySize;
@@ -146,7 +145,6 @@ $('output-size').addEventListener('change', event => {
 });
 $('show-notes').addEventListener('change', event => { state.showNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
 $('show-losers-gray').addEventListener('change', event => { state.showLosersGray = event.target.checked; dirty = true; preview(); });
-$('show-bye-gray').addEventListener('change', event => { state.showByeGray = event.target.checked; dirty = true; preview(); });
 $('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; if (state.showTitles) state.showBottomMargin = false; dirty = true; $('titles-editor').hidden = !state.showTitles; syncControls(); });
 $('show-bottom-margin').addEventListener('change', event => { state.showBottomMargin = event.target.checked; if (state.showBottomMargin) state.showTitles = false; dirty = true; $('titles-editor').hidden = true; syncControls(); });
 $('titles-editor').addEventListener('input', event => {

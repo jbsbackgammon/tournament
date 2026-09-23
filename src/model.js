@@ -23,7 +23,7 @@ export function createTournament(size = 16) {
     version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
     champion: '', notes: {}, roundPoints: Array(Math.log2(size)).fill(''),
-    showNotes: true, showTitles: false, showBottomMargin: false, showLosersGray: true, showByeGray: true,
+    showNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true,
     titles: TITLE_DEFAULTS.map(entry => ({ ...entry })),
     sourceUpdated: ''
   };
@@ -40,10 +40,10 @@ export function validateTournament(raw) {
   for (const field of ['title', 'edition', 'subtitle', 'footer', 'champion', 'sourceUpdated']) out[field] = cleanName(raw[field]).slice(0, 300);
   out.accent = /^#[0-9a-f]{6}$/i.test(raw.accent) ? raw.accent : out.accent;
   out.notes = Object.fromEntries(Object.entries(raw.notes || {}).filter(([k, v]) => k.length <= 200 && typeof v === 'string').map(([k, v]) => [k, cleanName(v).slice(0, 200)]));
-  out.showNotes = raw.showNotes !== false;
+  out.showNotes = raw.showNotes === true;
   out.showTitles = raw.showTitles === true; out.showBottomMargin = raw.showBottomMargin === true;
-  out.showLosersGray = raw.showLosersGray !== false;
-  out.showByeGray = raw.showByeGray !== false;
+  out.showLosersGray = raw.showLosersGray === true;
+  out.showByeGray = true;
   out.roundPoints = out.roundPoints.map((_, i) => cleanName(raw.roundPoints?.[i]).slice(0, 30));
   out.titles = out.titles.map((entry, i) => ({ title: cleanName(raw.titles?.[i]?.title ?? entry.title).slice(0, 80), edition: cleanName(raw.titles?.[i]?.edition).slice(0, 40), winner: cleanName(raw.titles?.[i]?.winner).slice(0, 100) }));
   return out;

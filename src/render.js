@@ -87,7 +87,7 @@ export function renderBracket(state, options = {}) {
     const p = nodes[0][i];
     const x = p.side ? W - margin - box : margin;
     const y = p.y - pitch / 2;
-    const fill = name === 'BYE' ? (state.showByeGray ? '#d9d9d9' : '#fff') : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
+    const fill = name === 'BYE' ? '#d9d9d9' : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
     const note = notes ? state.notes[name] : '';
     parts.push(`<rect x="${x}" y="${y}" width="${box}" height="${pitch}" fill="${fill}" stroke="#858585" stroke-width="${size === 64 ? 1.5 : 3.5}"/>`);
     if (note) {
