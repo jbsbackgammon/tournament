@@ -32,3 +32,12 @@ dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;
 @media(max-width:1150px){.editing-layout{grid-template-columns:minmax(0,1fr);gap:18px}.players-grid{grid-template-columns:1fr}.controls,.editor-section{padding:18px}}
 @media(max-width:760px){.workspace{padding:10px 10px 32px}.preview-surface{margin-bottom:16px}.editing-layout{grid-template-columns:1fr;gap:16px}.editor-heading{align-items:start;flex-wrap:wrap;gap:12px}.editor-heading label{width:100%}.controls,.editor-section{padding:18px}}
 @media print{.editing-layout,#notice{display:none}.workspace{padding:0}.preview-surface{border:0;margin:0}}
+
+.controls,.output-section,.editor-section{background:white;border:1px solid #d4dde6;border-radius:6px;padding:18px;min-width:0}
+.input-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px}
+.metadata-grid{align-self:start}.metadata-grid .row>.edition{flex-basis:120px}
+.output-grid{display:grid;grid-template-columns:minmax(160px,1fr) minmax(0,2fr);gap:16px}
+.output-options{display:flex;align-items:center;flex-wrap:wrap;gap:8px 24px}.output-options .help{margin-left:auto}
+#titles-editor{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.title-item{margin:0 0 12px}.data-actions{margin-bottom:8px}details{margin-top:4px}
+@media(max-width:760px){.input-grid,.output-grid{grid-template-columns:1fr;gap:8px}.output-options{gap:0 16px}.output-options .help{margin-left:0}.metadata-grid .row>.edition{flex-basis:100px}}

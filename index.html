@@ -6,7 +6,7 @@
   <meta name="description" content="eJBSから対戦表を取り込み、8・16・32・64枠のトーナメント表をPNGで作成。">
   <title>Tournament — トーナメント表作成</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=stacked-editor">
+  <link rel="stylesheet" href="./style.css?v=compact-blocks">
 </head>
 <body>
   <main class="workspace">
@@ -15,44 +15,34 @@
     <div class="editing-layout">
     <aside class="controls" aria-label="大会の設定">
       <section>
-        <h2>入力</h2>
+        <h2>データ入力</h2><div class="input-grid"><div>
         <div class="data-actions"><button id="save-json">大会データを保存</button><label class="button" for="open-json">データを開く</label><input hidden type="file" id="open-json" accept=".json"></div>
         <div class="row"><label>元の枠数<select id="source-size"><option>8</option><option selected>16</option><option>32</option><option>64</option></select></label><button id="new-tournament">新規作成</button></div>
         <details open>
           <summary>eJBS・選手名を取り込む</summary>
           <textarea aria-label="eJBSソース・選手名" id="source-text" rows="5" placeholder="eJBSソース・選手名" spellcheck="false"></textarea>
           <div class="row"><button class="dark" id="import-source">取り込む</button><label class="button" for="source-file">.txtを選択</label><input hidden type="file" id="source-file" accept=".txt,.html,.htm,text/plain,text/html"></div>
-          <div class="samples"><button id="sample-64">名人戦 64枠</button><button id="sample-16">新鋭戦 16枠</button></div>
         </details>
-      </section>
-      <section>
-        <h2>大会情報</h2>
-        <div class="row"><label class="edition">期・回<input id="edition" maxlength="40" placeholder="第32期"></label><label>大会名<input id="title" maxlength="100" placeholder="名人戦"></label></div>
-        <label>帯の文言<input id="subtitle" maxlength="100" value="バックギャモン"></label>
+      </div><div class="metadata-grid">
+        <div class="row"><label class="edition">回次等<input id="edition" maxlength="40" placeholder="第32期"></label><label>大会名<input id="title" maxlength="100" placeholder="名人戦"></label></div>
         <div class="row"><label>帯の色<select id="accent"><option value="#70700d">名人戦・オリーブ</option><option value="#75092f">盤聖戦・えんじ</option><option value="#10686b">新鋭戦・青緑</option><option value="#710d61">女王戦・紫</option><option value="#0c7034">王位戦・緑</option><option value="#12246e">賽王戦・紺</option><option value="#3c3c3c">日本選手権・墨</option></select></label></div>
-        <label>下部の注記<input id="footer" maxlength="180" placeholder="開催日・会場など（任意）"></label>
+        </div></div>
       </section>
-      <section>
-        <h2>表示・書き出し</h2>
+      </aside><section class="output-section"><h2>トーナメント表出力</h2><div class="output-grid">
         <label>表示する枠数<select id="display-size"></select></label>
-        <label class="check"><input id="show-notes" type="checkbox" checked>名前の下に補足を表示</label>
         <div class="row"><label>PNGサイズ<select id="format"><option value="hd">1920 × 1080 px</option><option value="a4">A4（300dpi）</option><option value="a5">A5（300dpi）</option></select></label><label class="edition">向き<select id="orientation"><option value="landscape">横</option><option value="portrait">縦</option></select></label></div>
-        <p class="help" id="dimensions"></p>
+        </div><div class="output-options"><label class="check"><input id="show-notes" type="checkbox" checked>名前の下に補足を表示</label><label class="check"><input id="show-titles" type="checkbox">5大タイトル優勝者を表示</label><p class="help" id="dimensions"></p></div><div id="titles-editor" hidden></div>
         <button id="export-png" class="primary full">PNGを書き出す <span>↓</span></button>
       </section>
-      <section>
-        <label class="check"><input id="show-titles" type="checkbox">5大タイトル優勝者を表示</label>
-        <div id="titles-editor" hidden></div>
-      </section>
-    </aside>
+      
       <section class="editor-section">
-        <div class="editor-heading"><div><h2>選手・勝ち上がりを編集</h2></div><label>編集ラウンド<select id="edit-round"></select></label></div>
+        <div class="editor-heading"><div><h2>編集</h2></div><label>編集ラウンド<select id="edit-round"></select></label></div>
         <div id="players-editor" class="players-grid"></div>
         <label class="champion-field">優勝者<input id="champion" maxlength="100" placeholder="優勝者名"></label>
       </section>
     </div>
   </main>
   <dialog id="replace-dialog"><h2>現在の大会データを置き換えますか？</h2><p>必要な場合はキャンセルして「大会データを保存」してください。</p><form method="dialog"><button value="cancel">キャンセル</button><button value="replace" class="dark">置き換える</button></form></dialog>
-  <script type="module" src="./src/app.js"></script>
+  <script type="module" src="./src/app.js?v=compact-blocks"></script>
 </body>
 </html>

@@ -25,8 +25,10 @@ function preview() {
 }
 
 function syncControls() {
+  state.subtitle = 'バックギャモン';
+  state.footer = '';
   $('source-size').value = state.size;
-  for (const field of ['edition', 'title', 'subtitle', 'footer', 'accent', 'champion']) $(field).value = state[field];
+  for (const field of ['edition', 'title', 'accent', 'champion']) $(field).value = state[field];
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
   $('titles-editor').hidden = !state.showTitles;
@@ -39,7 +41,7 @@ function syncControls() {
 }
 
 function renderTitles() {
-  $('titles-editor').innerHTML = state.titles.map((entry, i) => `<div class="title-item" style="border-color:${TITLE_COLORS[i]}"><div class="row"><label class="edition">期・回<input data-ti="${i}" data-tf="edition" value="${esc(entry.edition)}" maxlength="40" aria-label="${i + 1}つ目のタイトルの期・回"></label><label>タイトル<input data-ti="${i}" data-tf="title" value="${esc(entry.title)}" maxlength="80" aria-label="${i + 1}つ目のタイトル名"></label></div><label>優勝者<input data-ti="${i}" data-tf="winner" value="${esc(entry.winner)}" maxlength="100" aria-label="${i + 1}つ目のタイトル優勝者"></label></div>`).join('');
+  $('titles-editor').innerHTML = state.titles.map((entry, i) => `<div class="title-item" style="border-color:${TITLE_COLORS[i]}"><div class="row"><label class="edition">回次等<input data-ti="${i}" data-tf="edition" value="${esc(entry.edition)}" maxlength="40" aria-label="${i + 1}つ目のタイトルの回次等"></label><label>タイトル<input data-ti="${i}" data-tf="title" value="${esc(entry.title)}" maxlength="80" aria-label="${i + 1}つ目のタイトル名"></label></div><label>優勝者<input data-ti="${i}" data-tf="winner" value="${esc(entry.winner)}" maxlength="100" aria-label="${i + 1}つ目のタイトル優勝者"></label></div>`).join('');
 }
 
 function renderPlayers() {
@@ -87,20 +89,13 @@ $('source-file').addEventListener('change', async event => {
   } catch (error) { note(error.message, true); }
   event.target.value = '';
 });
-for (const size of [16, 64]) $('sample-' + size).addEventListener('click', async () => {
-  try {
-    const response = await fetch(`./fixtures/ejbs-${size}.html`);
-    if (!response.ok) throw new Error('サンプルを読み込めませんでした。');
-    await importText(await response.text(), true);
-  } catch (error) { note(error.message, true); }
-});
 $('new-tournament').addEventListener('click', async () => {
   if (!await mayReplace()) return;
   state = createTournament(Number($('source-size').value));
   view.displaySize = state.size; editRound = 0; dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
-for (const field of ['edition', 'title', 'subtitle', 'footer', 'accent', 'champion']) $(field).addEventListener('input', event => {
+for (const field of ['edition', 'title', 'accent', 'champion']) $(field).addEventListener('input', event => {
   state[field] = event.target.value; dirty = true; preview();
 });
 $('champion').addEventListener('change', renderPlayers);
