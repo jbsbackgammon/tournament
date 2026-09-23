@@ -7,6 +7,7 @@ const $ = id => document.getElementById(id);
 let state = createTournament(16);
 let view = { displaySize: 16, format: 'hd', orientation: 'landscape' };
 let editRound = 0, dirty = false;
+const orientationFor = format => format === 'a4' ? 'portrait' : 'landscape';
 let noticeTimer;
 const note = (message, error = false) => {
   clearTimeout(noticeTimer);
@@ -15,12 +16,16 @@ const note = (message, error = false) => {
   if (!error) noticeTimer = setTimeout(() => { $('notice').textContent = ''; }, 4000);
 };
 const safeFilename = name => (name || 'tournament').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 100);
+const historyKey = 'tournament-history-v1';
+function readHistory() { try { const value = JSON.parse(localStorage.getItem(historyKey) || '[]'); return Array.isArray(value) ? value : []; } catch { return []; } }
+function writeHistory(entry) { const items = [entry, ...readHistory().filter(item => item.id !== entry.id)].slice(0, 100); localStorage.setItem(historyKey, JSON.stringify(items)); }
+function renderHistory() { const select = $('history-select'); const items = readHistory(); select.innerHTML = items.length ? items.map((item, i) => `<option value="${i}">${esc(item.label)}</option>`).join('') : '<option value="">履歴はありません</option>'; }
 
 function preview() {
   $('preview').innerHTML = renderBracket(state, view);
   const { width, height, dpi } = dimensions(view.format, view.orientation);
   $('dimensions').textContent = `${width.toLocaleString()} × ${height.toLocaleString()} px${view.format === 'hd' ? '' : `・${dpi}dpi`}`;
-  $('orientation').disabled = view.format === 'hd';
+  view.orientation = orientationFor(view.format);
   $('show-notes').disabled = view.displaySize === 64;
 }
 
@@ -29,12 +34,16 @@ function syncControls() {
   state.footer = '';
   $('source-size').value = state.size;
   for (const field of ['edition', 'title', 'accent', 'champion']) $(field).value = state[field];
+  $('accent-swatch').style.backgroundColor = state.accent;
   $('show-notes').checked = state.showNotes;
   $('show-titles').checked = state.showTitles;
+  $('show-bottom-margin').checked = state.showBottomMargin;
+  $('show-losers-gray').checked = state.showLosersGray;
+  $('show-bye-gray').checked = state.showByeGray;
   $('titles-editor').hidden = !state.showTitles;
-  $('display-size').innerHTML = SIZES.filter(n => n <= state.size).map(n => `<option value="${n}">${n}枠${n < state.size ? `（ベスト${n}以降）` : '（全体）'}</option>`).join('');
-  $('display-size').value = view.displaySize;
-  $('format').value = view.format; $('orientation').value = view.orientation;
+  if (!SIZES.includes(view.displaySize) || view.displaySize > state.size) view.displaySize = state.size;
+  $('output-size').value = view.displaySize;
+  $('format').value = view.format;
   $('edit-round').innerHTML = state.rounds.map((round, r) => `<option value="${r}">${roundLabel(round.length)}・${round.length}枠</option>`).join('');
   $('edit-round').value = editRound;
   renderTitles(); renderPlayers(); preview();
@@ -52,7 +61,10 @@ function renderPlayers() {
     const pair = [i, i + 1].map(index => {
       const name = names[index];
       const winner = editRound === rounds.length - 1 ? state.champion : rounds[editRound + 1][Math.floor(index / 2)];
-      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" placeholder="未定（不戦勝枠はBYE）" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" placeholder="補足（所属・予選順位など）" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${sameName(name, winner) ? 'is-winner' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">勝者${sameName(name, winner) ? ' ✓' : ''}</button></div>`;
+      const opponent = names[index % 2 ? index - 1 : index + 1];
+      const selected = sameName(name, winner);
+      const lost = !selected && sameName(opponent, winner);
+      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" placeholder="未定（不戦勝枠はBYE）" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" placeholder="補足" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
   }
@@ -79,16 +91,6 @@ async function importText(text, sample = false) {
 }
 
 $('import-source').addEventListener('click', () => importText($('source-text').value));
-$('source-file').addEventListener('change', async event => {
-  const file = event.target.files[0];
-  if (!file) return;
-  try {
-    if (file.size > 2_000_000) throw new Error('ファイルは2MB以内にしてください。');
-    const text = await file.text(); $('source-text').value = text;
-    await importText(text);
-  } catch (error) { note(error.message, true); }
-  event.target.value = '';
-});
 $('new-tournament').addEventListener('click', async () => {
   if (!await mayReplace()) return;
   state = createTournament(Number($('source-size').value));
@@ -96,16 +98,18 @@ $('new-tournament').addEventListener('click', async () => {
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
 for (const field of ['edition', 'title', 'accent', 'champion']) $(field).addEventListener('input', event => {
-  state[field] = event.target.value; dirty = true; preview();
+  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; dirty = true; preview();
 });
 $('champion').addEventListener('change', renderPlayers);
-$('display-size').addEventListener('change', event => {
+$('format').addEventListener('change', event => { view.format = event.target.value; view.orientation = orientationFor(view.format); preview(); });
+$('output-size').addEventListener('change', event => {
   view.displaySize = Number(event.target.value);
   editRound = Math.log2(state.size / view.displaySize);
-  $('edit-round').value = editRound; renderPlayers(); preview();
+  syncControls();
 });
-for (const field of ['format', 'orientation']) $(field).addEventListener('change', event => { view[field] = event.target.value; preview(); });
 $('show-notes').addEventListener('change', event => { state.showNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
+$('show-losers-gray').addEventListener('change', event => { state.showLosersGray = event.target.checked; dirty = true; preview(); });
+$('show-bye-gray').addEventListener('change', event => { state.showByeGray = event.target.checked; dirty = true; preview(); });
 $('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; dirty = true; $('titles-editor').hidden = !state.showTitles; preview(); });
 $('titles-editor').addEventListener('input', event => {
   const { ti, tf } = event.target.dataset;
@@ -124,7 +128,7 @@ $('players-editor').addEventListener('change', event => {
     const name = state.rounds[editRound][Number(player)];
     button.disabled = !name || name === 'BYE';
     button.setAttribute('aria-label', `${name || `選手${Number(player) + 1}`}を勝者にする`);
-    button.classList.remove('is-winner'); button.textContent = '勝者';
+    button.classList.remove('is-winner'); button.textContent = '勝';
     dirty = true; preview();
   } else if (noteIndex !== undefined) {
     const name = seededRounds(state)[editRound][Number(noteIndex)];
@@ -137,7 +141,15 @@ $('players-editor').addEventListener('click', event => {
   if (!button) return;
   try {
     state.rounds = seededRounds(state);
-    advance(state, editRound, Number(button.dataset.win));
+    const index = Number(button.dataset.win);
+    const name = state.rounds[editRound][index];
+    const selected = editRound === state.rounds.length - 1
+      ? sameName(state.champion, name)
+      : sameName(state.rounds[editRound + 1][Math.floor(index / 2)], name);
+    if (selected) {
+      if (editRound === state.rounds.length - 1) state.champion = '';
+      else editEntry(state, editRound + 1, Math.floor(index / 2), '');
+    } else advance(state, editRound, index);
     dirty = true; renderPlayers(); preview();
     note(editRound === state.rounds.length - 1 ? '優勝者を反映しました。' : '次のラウンドに勝者を反映しました。');
   } catch (error) { note(error.message, true); }
@@ -145,6 +157,13 @@ $('players-editor').addEventListener('click', event => {
 $('save-json').addEventListener('click', () => {
   downloadBlob(new Blob([JSON.stringify({ ...state, view }, null, 2)], { type: 'application/json' }), `${safeFilename(state.edition + state.title)}.json`);
   dirty = false; note('大会データを保存しました。');
+});
+$('history-load').addEventListener('click', () => { renderHistory(); $('history-dialog').showModal(); });
+$('history-dialog').addEventListener('close', async () => {
+  if ($('history-dialog').returnValue !== 'load') return;
+  const item = readHistory()[Number($('history-select').value)];
+  if (!item || !await mayReplace()) return;
+  state = validateTournament(item.state); view = item.view; editRound = 0; dirty = false; syncControls(); note('履歴を呼び出しました。');
 });
 $('open-json').addEventListener('change', async event => {
   const file = event.target.files[0];
@@ -168,6 +187,7 @@ $('export-png').addEventListener('click', async () => {
     const blob = await exportPng(snapshot, settings);
     const { width, height } = dimensions(settings.format, settings.orientation);
     downloadBlob(blob, `tournament_${safeFilename(snapshot.edition + snapshot.title)}_${settings.displaySize}_${width}x${height}.png`);
+    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${snapshot.edition || ''}${snapshot.title || '大会'}・${new Date().toLocaleString('ja-JP')}`, state: snapshot, view: settings });
     note('PNGを書き出しました。');
   } catch (error) { note(`PNGを書き出せませんでした。${error.message}`, true); }
   finally { $('export-png').disabled = false; }

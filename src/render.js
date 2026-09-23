@@ -13,7 +13,7 @@ export function bracketGeometry(size, H, showTitles = false) {
   const W = 1440, margin = 70, box = size === 64 ? 244 : 265;
   const levels = Math.log2(size), half = size / 2;
   const top = size === 8 ? H * .30 : size === 64 ? H * .045 : H * .145;
-  const bottom = H * (showTitles ? .79 : .90);
+  const bottom = H * (showTitles ? .79 : (state.showBottomMargin ? .78 : .90));
   const pitch = (bottom - top) / half;
   const edge = margin + box, centerGap = 212;
   const step = (W / 2 - centerGap / 2 - edge) / (levels - 1);
@@ -73,14 +73,14 @@ export function renderBracket(state, options = {}) {
     const p = nodes[0][i];
     const x = p.side ? W - margin - box : margin;
     const y = p.y - pitch / 2;
-    const fill = eliminated(i) ? '#d9d9d9' : '#fff';
+    const fill = name === 'BYE' ? (state.showByeGray ? '#d9d9d9' : '#fff') : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
     const note = notes ? state.notes[name] : '';
     parts.push(`<rect x="${x}" y="${y}" width="${box}" height="${pitch}" fill="${fill}" stroke="#858585" stroke-width="${size === 64 ? 1.5 : 3.5}"/>`);
     parts.push(text(name || '未定', x + box / 2, p.y + (note ? -font * .03 : font * .35), font, box - 22));
     if (note) parts.push(text(note, x + box / 2, p.y + font * .72, font * .52, box - 24));
   });
   const portrait = H > W;
-  const titleWidth = size === 64 ? 370 : 435;
+  const titleWidth = size === 64 ? 300 : 350;
   const titleY = size === 8 ? H * .135 : portrait ? Math.min(H * .09, 155) : H * .13;
   const titleFont = size === 64 ? 66 : 81;
   parts.push(text(state.edition, W / 2, titleY - titleFont * .85, 32, titleWidth));
