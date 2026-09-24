@@ -62,13 +62,14 @@ export function renderBracket(state, options = {}) {
       winners.push(d + (next ? `H${next.x}` : ''));
     }
   }));
-  const supplementText = (value, x, y, maxWidth, anchor = 'middle', wrapAt = null) => {
+  const supplementText = (value, x, y, maxWidth, anchor = 'middle', wrapAt = null, scale = .5, middle = false) => {
     if (!value) return '';
-    const base = font * .5;
+    const base = font * scale;
     const chars = [...String(value)];
     const needsWrap = wrapAt !== null && chars.length > wrapAt;
     const fs = base;
-    if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
+    const baseline = middle ? ' dominant-baseline="central"' : '';
+    if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}"${baseline} fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
     const lines = [];
     for (let i = 0; i < chars.length; i += wrapAt) lines.push(chars.slice(i, i + wrapAt).join(''));
     const startY = y - fs * 1.05 * (lines.length - 1);
@@ -76,11 +77,11 @@ export function renderBracket(state, options = {}) {
   };
   if (state.showMatchNotes || state.showResultNotes) {
     for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
-      const p = nodes[r][i], dest = nodes[r + 1][Math.floor(i / 2)], midX = (p.x + dest.x) / 2;
+      const p = nodes[r][i], dest = nodes[r + 1][Math.floor(i / 2)];
       const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
       const upperResult = state.resultNotes?.[start + r]?.[i];
       const lowerResult = state.resultNotes?.[start + r]?.[i + 1];
-      if (state.showMatchNotes) supplementParts.push(supplementText(note, midX, p.y + font * .2, Math.abs(dest.x - p.x) - 20, p.side ? 'start' : 'end'));
+      if (state.showMatchNotes) supplementParts.push(supplementText(note, dest.x + 10, dest.y, Math.abs(dest.x - p.x) - 20, 'start', null, .6, true));
       if (state.showResultNotes) {
         const align = p.side ? 'end' : 'start';
         const x = p.side ? p.x - 10 : p.x + 10;
