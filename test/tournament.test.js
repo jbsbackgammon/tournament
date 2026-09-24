@@ -142,4 +142,15 @@ test('winner routes include the outgoing arm through quarterfinals on both sides
     assert.match(svg, /stroke="#e71920"[^>]*stroke-linecap="square"/);
   }
 });
+test('result supplements use valid SVG alignment outside both player blocks', () => {
+  const state = createTournament(8);
+  state.showResultNotes = true;
+  state.resultNotes[0][0] = '左結果';
+  state.resultNotes[0][4] = '右結果';
+  const svg = renderBracket(state);
+  assert.match(svg, /text-anchor="start"[^>]*>左結果<\/text>/);
+  assert.match(svg, /text-anchor="end"[^>]*>右結果<\/text>/);
+  assert.ok(!svg.includes('text-anchor="left"'));
+  assert.ok(!svg.includes('text-anchor="right"'));
+});
 
