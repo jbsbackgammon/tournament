@@ -41,7 +41,7 @@ export function renderBracket(state, options = {}) {
   const { start } = displayRounds(state, size);
   const rounds = seededRounds(state).slice(start);
   const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles, state.showBottomMargin, width);
-  const line = size === 64 ? 7 : 14;
+  const line = size === 64 ? 7 : size === 32 ? 10.5 : 14;
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
   const accent = /^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : '#000000';
