@@ -7,6 +7,11 @@ const $ = id => document.getElementById(id);
 let state = createTournament(16);
 let view = { displaySize: 16, format: 'hd', orientation: 'landscape' };
 let editRound = 0, dirty = false;
+const ensureJbsEdition = () => {
+  if (!TOURNAMENT_MASTERS.some(entry => entry.title === state.title)) return;
+  const edition = state.edition.match(/第\s*\d+\s*[回期]/)?.[0].replace(/\s+/g, '');
+  if (edition) state.edition = `JBS ${edition}`;
+};
 const orientationFor = format => format === 'a4' ? 'portrait' : 'landscape';
 const autoFormatForSize = size => {
   if (Number(size) === 64) { view.format = 'a4'; view.orientation = 'portrait'; }
@@ -53,6 +58,7 @@ function preview() {
 function syncControls() {
   state.subtitle = 'バックギャモン';
   state.footer = '';
+  ensureJbsEdition();
   $('source-size').value = state.size;
   syncOutputOptions(state.size);
   syncFormatOptions(view.displaySize);
@@ -64,6 +70,7 @@ function syncControls() {
   $('show-match-notes').checked = state.showMatchNotes;
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
+  $('show-logo').checked = state.showLogo;
   $('show-titles').disabled = state.showBottomMargin;
   $('show-bottom-margin').disabled = state.showTitles;
   $('show-losers-gray').checked = state.showLosersGray;
@@ -149,13 +156,22 @@ document.addEventListener('click', event => {
 masterSelect.addEventListener('change', event => {
   const master = TOURNAMENT_MASTERS.find(entry => entry.title === event.target.value);
   if (!master) return;
-  state.title = master.title; state.accent = master.accent; dirty = true;
+  state.title = master.title; state.accent = master.accent; ensureJbsEdition(); dirty = true;
+  $('edition').value = state.edition;
   $('title').value = state.title; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent;
   masterSelect.hidden = true;
   preview();
 });
 for (const field of ['edition', 'title', 'accent']) $(field).addEventListener('input', event => {
-  state[field] = event.target.value; if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value; if (field === 'title') masterSelect.value = ''; dirty = true; preview();
+  state[field] = event.target.value;
+  if (field === 'title') {
+    const master = TOURNAMENT_MASTERS.find(entry => state.title.includes(entry.title));
+    if (master) { state.title = master.title; state.accent = master.accent; ensureJbsEdition(); $('title').value = state.title; $('edition').value = state.edition; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent; }
+    else masterSelect.value = '';
+  }
+  if (field === 'edition') { ensureJbsEdition(); event.target.value = state.edition; }
+  if (field === 'accent') $('accent-swatch').style.backgroundColor = event.target.value;
+  dirty = true; preview();
 });
 $('format').addEventListener('change', event => { view.format = event.target.value; view.orientation = orientationFor(view.format); preview(); });
 $('output-size').addEventListener('change', event => {
@@ -170,6 +186,7 @@ $('show-match-notes').addEventListener('change', event => { state.showMatchNotes
 $('show-losers-gray').addEventListener('change', event => { state.showLosersGray = event.target.checked; dirty = true; preview(); });
 $('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; if (state.showTitles) state.showBottomMargin = false; dirty = true; $('titles-editor').hidden = !state.showTitles; syncControls(); });
 $('show-bottom-margin').addEventListener('change', event => { state.showBottomMargin = event.target.checked; if (state.showBottomMargin) state.showTitles = false; dirty = true; $('titles-editor').hidden = true; syncControls(); });
+$('show-logo').addEventListener('change', event => { state.showLogo = event.target.checked; dirty = true; preview(); });
 $('titles-editor').addEventListener('input', event => {
   const { ti, tf } = event.target.dataset;
   if (ti === undefined) return;

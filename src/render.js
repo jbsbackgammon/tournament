@@ -178,7 +178,7 @@ export function renderBracket(state, options = {}) {
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
   const logoW = portrait ? 205 : 178, logoH = logoW * 1100 / 1830;
   const logoY = Math.max(finalY + 50, bottom - logoH - 14);
-  parts.push(`<image href="${logoData}" x="${W / 2 - logoW / 2}" y="${logoY}" width="${logoW}" height="${logoH}"/>`);
+  if (state.showLogo !== false) parts.push(`<image href="${logoData}" x="${W / 2 - logoW / 2}" y="${logoY}" width="${logoW}" height="${logoH}"/>`);
   if (state.showTitles) {
     const h = 151.875 / (1920 / 1440);
     const y = H - imageBottomGap - h;

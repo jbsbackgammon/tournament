@@ -203,3 +203,12 @@ test('64-player A4 champion label sits near the final connector', () => {
   assert.match(svg, new RegExp(`<text x="720" y="${expectedY}" font-size="26"[^>]*>優勝</text>`));
 });
 
+test('JBS logo is shown by default and can be hidden', () => {
+  const state = createTournament(8);
+  assert.ok(renderBracket(state).includes('<image href="data:image/jpeg;base64,'));
+  state.showLogo = false;
+  assert.ok(!renderBracket(state).includes('<image href="data:image/jpeg;base64,'));
+  const restored = validateTournament({ ...state, showLogo: undefined });
+  assert.equal(restored.showLogo, true);
+});
+

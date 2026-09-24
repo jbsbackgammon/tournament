@@ -23,7 +23,7 @@ export function createTournament(size = 16) {
     version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
     champion: '', notes: {}, matchNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), resultNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')), roundPoints: Array(Math.log2(size)).fill(''),
-    showNotes: false, showResultNotes: false, showMatchNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true,
+    showNotes: false, showResultNotes: false, showMatchNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true, showLogo: true,
     titles: TITLE_DEFAULTS.map(entry => ({ ...entry })),
     sourceUpdated: ''
   };
@@ -47,6 +47,7 @@ export function validateTournament(raw) {
   out.showTitles = raw.showTitles === true; out.showBottomMargin = raw.showBottomMargin === true;
   out.showLosersGray = raw.showLosersGray === true;
   out.showByeGray = true;
+  out.showLogo = raw.showLogo !== false;
   out.roundPoints = out.roundPoints.map((_, i) => cleanName(raw.roundPoints?.[i]).slice(0, 30));
   out.titles = out.titles.map((entry, i) => ({ title: cleanName(raw.titles?.[i]?.title ?? entry.title).slice(0, 80), edition: cleanName(raw.titles?.[i]?.edition).slice(0, 40), winner: cleanName(raw.titles?.[i]?.winner).slice(0, 100) }));
   return out;
