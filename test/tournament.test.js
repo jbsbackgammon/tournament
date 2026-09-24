@@ -127,13 +127,17 @@ test('champion label defaults to 優勝, can be changed, and survives saved JSON
   const legacy = { ...state }; delete legacy.championLabel;
   assert.equal(validateTournament(legacy).championLabel, '優勝');
 });
-test('theme-colored streamlines decorate both upper corners', () => {
+test('theme-colored domes decorate both upper corners', () => {
   const state = createTournament(16); state.accent = '#123456';
   const svg = renderBracket(state);
   assert.equal((svg.match(/fill="#123456"/g) || []).length, 3);
-  assert.ok(svg.includes('M0 0H420C485 0'));
-  assert.ok(svg.includes('M1440 0H1020C955 0'));
-  assert.ok(svg.includes('C600 48 600 58 580 68'));
+  assert.ok(svg.includes('<ellipse cx="0" cy="0" rx="480" ry="100"'));
+  assert.ok(svg.includes('<ellipse cx="1440" cy="0" rx="480" ry="100"'));
+});
+test('long edition text stays inside the decoration-free center area', () => {
+  const state = createTournament(16); state.edition = 'スポンサー名入り JBS 第32期 特別大会';
+  const svg = renderBracket(state);
+  assert.match(svg, /textLength="450"[^>]*>スポンサー名入り JBS 第32期 特別大会<\/text>/);
 });
 test('supplementary information hidden only for 64 display; footer titles opt-in', () => {
   const state = createTournament(64); state.showNotes = true; state.rounds[0][0] = 'A'; state.rounds[2][0] = 'A'; state.notes.A = 'NOTE_MARKER';

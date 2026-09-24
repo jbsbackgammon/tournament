@@ -51,10 +51,10 @@ export function renderBracket(state, options = {}) {
     const fit = estimateWidth(String(value)) * fs > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
     return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" fill="${color}" font-weight="${weight}"${fit}>${escapeXml(value)}</text>`;
   };
-  // Solid, mirrored streamlines fill the open upper corners while tapering
-  // toward the centered tournament heading.
-  parts.push(`<path d="M0 0H420C485 0 535 15 580 38C600 48 600 58 580 68C525 82 470 78 410 72C270 62 130 74 0 82Z" fill="${accent}"/>`);
-  parts.push(`<path d="M${W} 0H${W - 420}C${W - 485} 0 ${W - 535} 15 ${W - 580} 38C${W - 600} 48 ${W - 600} 58 ${W - 580} 68C${W - 525} 82 ${W - 470} 78 ${W - 410} 72C${W - 270} 62 ${W - 130} 74 ${W} 82Z" fill="${accent}"/>`);
+  // Cropped ellipses form simple, solid domes in both upper corners. Their
+  // 480-unit center gap keeps even a long sponsor edition clear of the color.
+  parts.push(`<ellipse cx="0" cy="0" rx="480" ry="100" fill="${accent}"/>`);
+  parts.push(`<ellipse cx="${W}" cy="0" rx="480" ry="100" fill="${accent}"/>`);
   const paths = [], winners = [], supplementParts = [];
   nodes.forEach((row, r) => row.forEach((p, i) => {
     if (r === levels - 1) return;
@@ -169,7 +169,8 @@ export function renderBracket(state, options = {}) {
   // every output size and orientation.
   const editionFont = (50 * outputScale) / pxScale;
   const editionY = (40 * outputScale) / pxScale + editionFont;
-  parts.push(text(state.edition, W / 2, editionY, editionFont, titleWidth));
+  const editionWidth = 450;
+  parts.push(text(state.edition, W / 2, editionY, editionFont, editionWidth));
   if (state.title) parts.push(text(state.title, W / 2, titleY, titleFont, titleFont * 6));
   const subtitleFont = (50 * outputScale) / pxScale;
   const subtitleWidth = Math.min(titleWidth, Math.max(150 / pxScale, estimateWidth(state.subtitle) * subtitleFont * .9 + 48 / pxScale));
