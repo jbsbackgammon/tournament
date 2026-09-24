@@ -1,4 +1,4 @@
-import { createTournament, cleanName, SIZES } from './model.js';
+import { createTournament, cleanName, SIZES, TOURNAMENT_MASTERS } from './model.js';
 
 // eJBS appends internal metadata after a slash in some player fields.
 const playerName = value => cleanName(value).split('/')[0].trim();
@@ -45,10 +45,18 @@ export function importTournament(text, requestedSize = 16) {
     const state = createTournament(size);
     let offset = 0;
     state.rounds = state.rounds.map(round => { const result = entries.slice(offset, offset + round.length); offset += round.length; return result; });
-    const titleMatch = cleanName(data.name).match(/^(第\s*\d+\s*[回期])\s*(.*)$/);
-    state.edition = titleMatch?.[1] || '';
-    state.title = titleMatch?.[2] || cleanName(data.name);
-    state.accent = state.title.includes('新鋭') ? '#10686b' : state.title.includes('女王') ? '#710d61' : state.title.includes('盤聖') ? '#75092f' : '#000000';
+    const sourceTitle = cleanName(data.name);
+    const master = TOURNAMENT_MASTERS.find(entry => sourceTitle.includes(entry.title));
+    const edition = sourceTitle.match(/第\s*\d+\s*[回期]/)?.[0].replace(/\s+/g, '') || '';
+    if (master) {
+      state.edition = edition ? `JBS ${edition}` : '';
+      state.title = master.title;
+      state.accent = master.accent;
+    } else {
+      const titleMatch = sourceTitle.match(/^(第\s*\d+\s*[回期])\s*(.*)$/);
+      state.edition = titleMatch?.[1]?.replace(/\s+/g, '') || '';
+      state.title = titleMatch?.[2] || sourceTitle;
+    }
     state.champion = cleanName(data.winner);
     state.sourceUpdated = cleanName(data.update);
     state.roundPoints = state.roundPoints.map((_, i) => cleanName(String(data.roundpts ?? '').split(',')[i]));

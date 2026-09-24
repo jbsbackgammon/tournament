@@ -9,7 +9,7 @@ import { withDpi, crc32 } from '../src/export.js';
 const load = async size => importTournament(await readFile(new URL(`../fixtures/ejbs-${size}.html`, import.meta.url), 'utf8')).state;
 test('provided 16-player HTML preserves rounds and restores seeded entrants', async () => {
   const state = await load(16), rounds = seededRounds(state);
-  assert.equal(state.title, '新鋭戦'); assert.equal(state.edition, '第15回');
+  assert.equal(state.title, '新鋭戦'); assert.equal(state.edition, 'JBS 第15回'); assert.equal(state.accent, '#0D676B');
   assert.deepEqual(state.rounds.map(r => r.length), [16, 8, 4, 2]);
   assert.deepEqual(rounds[0].slice(2, 4), ['北野 雄大', 'BYE']);
   assert.deepEqual(rounds[0].slice(12), ['中村 泉美', 'BYE', '川島 颯', 'BYE']);
@@ -74,6 +74,13 @@ test('identical opponents automatically advance the upper player', () => {
 test('eJBS player names discard slash metadata', () => {
   const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(',') };
   assert.equal(importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state.rounds[0][0], '選手A');
+});
+test('eJBS master tournament names apply the normalized edition, title and color', () => {
+  const data = { players: 8, data: Array(14).fill('').join(','), name: 'JBS 第 32 期 盤聖戦 予選' };
+  const state = importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state;
+  assert.equal(state.edition, 'JBS 第32期');
+  assert.equal(state.title, '盤聖戦');
+  assert.equal(state.accent, '#6B0D2F');
 });
 test('saved JSON roundtrip and malformed JSON validation', async () => {
   const state = await load(16); state.notes['川島 颯'] = '予選B組1位'; state.showTitles = true;
