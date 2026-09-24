@@ -50,7 +50,7 @@ export function renderBracket(state, options = {}) {
     const fit = estimateWidth(String(value)) * fs > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
     return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="middle" fill="${color}" font-weight="${weight}"${fit}>${escapeXml(value)}</text>`;
   };
-  const paths = [], winners = [];
+  const paths = [], winners = [], supplementParts = [];
   nodes.forEach((row, r) => row.forEach((p, i) => {
     if (r === levels - 1) return;
     const dest = nodes[r + 1][Math.floor(i / 2)];
@@ -79,12 +79,12 @@ export function renderBracket(state, options = {}) {
       const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
       const upperResult = state.resultNotes?.[start + r]?.[i];
       const lowerResult = state.resultNotes?.[start + r]?.[i + 1];
-      if (state.showMatchNotes) parts.push(supplementText(note, midX, p.y + font * .2, Math.abs(dest.x - p.x) - 20, p.side ? 'start' : 'end'));
+      if (state.showMatchNotes) supplementParts.push(supplementText(note, midX, p.y + font * .2, Math.abs(dest.x - p.x) - 20, p.side ? 'start' : 'end'));
       if (state.showResultNotes) {
         const align = p.side ? 'right' : 'left';
         const x = p.side ? p.x - 10 : p.x + 10;
-        parts.push(supplementText(upperResult, x, nodes[r][i].y - line * 1.2, Math.abs(dest.x - p.x) - 20, align));
-        parts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + line * 2.2, Math.abs(dest.x - p.x) - 20, align));
+        supplementParts.push(supplementText(upperResult, x, nodes[r][i].y - line * 1.2, Math.abs(dest.x - p.x) - 20, align));
+        supplementParts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + line * 2.2, Math.abs(dest.x - p.x) - 20, align));
       }
     }
   }
@@ -128,6 +128,7 @@ export function renderBracket(state, options = {}) {
       parts.push(text(name || '未定', x + box / 2, p.y + font * .35, font, box - 22));
     }
   });
+  parts.push(...supplementParts);
   const portrait = H > W;
   const titleWidth = size === 64 ? 300 : 350;
   const pxScale = width / W;
