@@ -163,7 +163,7 @@ test('match supplements sit inside both connector shapes and are vertically cent
   const leftIntersection = nodes[1][0];
   const rightIntersection = nodes[1][2];
   const svg = renderBracket(state);
-  assert.match(svg, new RegExp(`<text x="${leftIntersection.x - 10}" y="${leftIntersection.y}" font-size="27" text-anchor="end" dominant-baseline="central"[^>]*>試合補足</text>`));
-  assert.match(svg, new RegExp(`<text x="${rightIntersection.x + 10}" y="${rightIntersection.y}" font-size="27" text-anchor="start" dominant-baseline="central"[^>]*>右試合補足</text>`));
+  assert.match(svg, new RegExp(`<text x="${leftIntersection.x - 10}" y="${leftIntersection.y}" font-size="29.25" text-anchor="end" dominant-baseline="central"[^>]*>試合補足</text>`));
+  assert.match(svg, new RegExp(`<text x="${rightIntersection.x + 10}" y="${rightIntersection.y}" font-size="29.25" text-anchor="start" dominant-baseline="central"[^>]*>右試合補足</text>`));
 });
 

@@ -84,7 +84,7 @@ export function renderBracket(state, options = {}) {
       if (state.showMatchNotes) {
         const matchX = dest.x + (p.side ? 10 : -10);
         const matchAlign = p.side ? 'start' : 'end';
-        supplementParts.push(supplementText(note, matchX, dest.y, Math.abs(dest.x - p.x) - 20, matchAlign, null, .6, true));
+        supplementParts.push(supplementText(note, matchX, dest.y, Math.abs(dest.x - p.x) - 20, matchAlign, null, .65, true));
       }
       if (state.showResultNotes) {
         const align = p.side ? 'end' : 'start';
