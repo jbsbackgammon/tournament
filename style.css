@@ -56,18 +56,18 @@ dialog{border:1px solid #c5cfda;border-radius:10px;padding:28px;max-width:480px;
 @media(max-width:760px){.input-grid,.output-grid{grid-template-columns:1fr;gap:8px}.output-options{gap:0 16px}.output-options .help{margin-left:0}.metadata-grid .row>.edition{flex-basis:100px}}
 @media(max-width:760px){.editor-meta-row{width:100%;flex-wrap:wrap}.editor-meta-row label,.editor-meta-row .edition{flex:1 1 45%}}
 .output-grid{display:block!important}.output-format-row{width:100%!important}.output-format-row select{width:100%!important;max-width:none!important}
-.output-format-row{display:block!important;width:100%!important}.output-format-row select{display:block!important;width:100%!important;min-width:100%!important}.export-actions{align-items:stretch}.export-actions button{min-height:40px;height:100%}.editor-options{border-bottom:0!important}.editor-meta-row label:last-child{display:flex;align-items:flex-end;gap:6px}.editor-meta-row label:last-child select{flex:1}.accent-swatch{margin:0!important;flex:0 0 32px}
+.output-format-row{display:block!important;width:100%!important}.output-format-row select{display:block!important;width:100%!important;min-width:100%!important}.export-actions{align-items:stretch}.export-actions button{min-height:40px;height:100%}.editor-options{border-bottom:0!important}.editor-meta-row .accent-field{display:flex;align-items:flex-end;gap:6px}.editor-meta-row .accent-field select{flex:1}.accent-swatch{margin:0!important;flex:0 0 32px}
 .output-section .output-grid,.output-section .output-format-row,.output-section #format{display:block!important;width:100%!important;max-width:none!important}.export-actions button{display:flex;align-items:center;justify-content:center;text-align:center}
-.editor-heading h2{border-bottom:0!important}.editor-meta-row label:last-child{align-items:flex-end}.editor-meta-row label:last-child .accent-swatch{margin-bottom:4px!important}.match-card{padding:6px}.match-label{margin-bottom:4px}.player-row{gap:4px;padding:2px 0}.player-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}.player-fields .note{min-height:36px;border-top:1px solid #c5cfda;border-radius:4px;background:#f8fafc}.player-row button{min-height:34px;padding:3px 6px}
-.editor-meta-row label:last-child{display:block!important;position:relative;align-self:stretch}.editor-meta-row label:last-child select{width:calc(100% - 40px)!important}.editor-meta-row label:last-child .accent-swatch{position:absolute;right:0;bottom:4px;margin:0!important}
+.editor-heading h2{border-bottom:0!important}.editor-meta-row .accent-field{align-items:flex-end}.editor-meta-row .accent-field .accent-swatch{margin-bottom:4px!important}.match-card{padding:6px}.match-label{margin-bottom:4px}.player-row{gap:4px;padding:2px 0}.player-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}.player-fields .note{min-height:36px;border-top:1px solid #c5cfda;border-radius:4px;background:#f8fafc}.player-row button{min-height:34px;padding:3px 6px}
+.editor-meta-row .accent-field{display:block!important;position:relative;align-self:stretch}.editor-meta-row .accent-field select{width:calc(100% - 40px)!important}.editor-meta-row .accent-field .accent-swatch{position:absolute;right:0;bottom:4px;margin:0!important}
 .players-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.player-fields{display:block}.player-fields:has(.note){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}.player-row button{width:48px;min-width:48px;max-width:48px;padding:3px 2px}.player-row{grid-template-columns:minmax(0,1fr) 48px}@media(max-width:1150px) and (min-width:761px){.players-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.players-grid{grid-template-columns:1fr}}
 .player-fields:has(.result-note){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px}.player-fields:has(.result-note):has(.note){grid-template-columns:repeat(3,minmax(0,1fr))}.player-fields .result-note{min-height:36px;border-radius:4px;background:#f8fafc}.match-note{min-height:36px;background:#f8fafc}.result-note::placeholder,.note::placeholder,.match-note::placeholder{color:#9aa3ad;opacity:1}
-.editor-meta-row label:last-child{display:block!important;position:relative;align-self:auto;text-align:left}.editor-meta-row label:last-child select{display:block!important;width:calc(100% - 40px)!important;margin-top:6px!important}.editor-meta-row label:last-child .accent-swatch{top:28px;right:0;bottom:auto;margin:0!important;position:absolute}
+.editor-meta-row .accent-field{display:block!important;position:relative;align-self:auto;text-align:left}.editor-meta-row .accent-field select{display:block!important;width:calc(100% - 40px)!important;margin-top:6px!important}.editor-meta-row .accent-field .accent-swatch{top:28px;right:0;bottom:auto;margin:0!important;position:absolute}
 .editor-heading h2{padding-bottom:0!important;margin-bottom:0!important}.editor-heading{padding-bottom:0!important}
 .player-row button{height:40px;min-height:40px;align-self:start}
 body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo",sans-serif}
 .title-picker{display:flex;position:relative;margin-top:6px;height:40px}.title-picker>#master-toggle{flex:0 0 88px;height:40px;min-height:40px;margin:0;border:1px solid #c5cfda;border-right:0;border-radius:5px 0 0 5px;background:#fff;color:#1c2a3a;font-size:.875rem;font-weight:600}.title-picker>#title{height:40px;min-height:40px;margin:0;border-radius:0 5px 5px 0;font-size:.875rem}.title-picker>#tournament-master{position:absolute;z-index:5;left:0;top:42px;width:100%;height:auto;max-height:320px;margin:0;padding:0;background:#fff;border:1px solid #c5cfda;border-radius:0 0 14px 14px;box-shadow:0 8px 18px #1c2a3a22;font-size:.875rem;line-height:1.35}.title-picker>#tournament-master option{padding:7px 12px;background:#fff;color:#1c2a3a}
-.output-format-row{display:flex!important;gap:16px;align-items:stretch}.output-format-row select{flex:1;min-width:0!important}.editor-meta-row label:last-child{min-width:150px;padding-right:38px}.editor-meta-row label:last-child .accent-swatch{z-index:2}
+.output-format-row{display:flex!important;gap:16px;align-items:stretch}.output-format-row select{flex:1;min-width:0!important}.editor-meta-row .accent-field{min-width:150px;padding-right:38px}.editor-meta-row .accent-field .accent-swatch{z-index:2}
 .editor-heading{min-height:0!important;margin-bottom:12px!important;gap:12px}.editor-heading h2{line-height:1.25}.editor-options{padding:0!important;margin:0!important}.input-size-row{margin-bottom:10px}.player-row button.is-loser{color:#6d7780;background:#f2f4f6;border-color:#d2d8dd}
 
 /* Consistent control borders, spacing and alignment. */
@@ -78,11 +78,11 @@ body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo
 .editor-heading h2{flex:0 0 auto;white-space:nowrap;line-height:normal}
 .editor-heading label{min-width:0}
 .editor-options{flex:1;gap:8px 20px}
-.editor-meta-row label:last-child{padding-right:46px;min-width:158px}
+.editor-meta-row .accent-field{padding-right:46px;min-width:158px}
 .editor-meta-row #accent{height:40px}
-.editor-meta-row label:last-child .accent-swatch{width:40px;height:40px;top:auto;bottom:0;margin:0!important}
+.editor-meta-row .accent-field .accent-swatch{width:40px;height:40px;top:auto;bottom:0;margin:0!important}
 
-/* Keep the four tournament metadata controls aligned and equally wide. */
+/* Keep the tournament metadata controls aligned and equally wide. */
 .editor-meta-row>label,.editor-meta-row>.edition{flex:1 1 0!important;min-width:0!important}
 .editor-meta-row input,.editor-meta-row select,.editor-meta-row .title-picker,.editor-meta-row #master-toggle{height:40px;min-height:40px}
 .check:has(input:disabled){color:#9aa3ad}
@@ -92,3 +92,4 @@ body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo
 
 
 #history-dialog{width:min(760px,calc(100vw - 32px));max-width:760px}
+

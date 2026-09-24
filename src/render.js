@@ -175,7 +175,7 @@ export function renderBracket(state, options = {}) {
   parts.push(text(state.subtitle, W / 2, subtitleY + (46 * outputScale) / pxScale, subtitleFont, subtitleWidth - (20 * outputScale) / pxScale, '#fff'));
   const championOffset = size === 64 ? 102 : (portrait ? H * .10 : 102);
   const championY = Math.max(titleY + 115, finalY - championOffset);
-  parts.push(text('優勝', W / 2, championY, 26, 205));
+  parts.push(text(state.championLabel ?? '優勝', W / 2, championY, 26, 205));
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
   const logoW = portrait ? 205 : 178, logoH = logoW * 1100 / 1830;
   const logoY = Math.max(finalY + 50, bottom - logoH - 14);

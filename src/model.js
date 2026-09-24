@@ -27,7 +27,7 @@ export const roundLabel = count => ({ 2: '決勝', 4: '準決勝', 8: '準々決
 export function createTournament(size = 16) {
   if (!SIZES.includes(size)) throw new Error('対応する枠数は8・16・32・64です。');
   return {
-    version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
+    version: 1, size, title: '', edition: '', championLabel: '優勝', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
     champion: '', notes: {}, matchNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), resultNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')), roundPoints: Array(Math.log2(size)).fill(''),
     showNotes: false, showResultNotes: false, showMatchNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true, showLogo: true,
@@ -45,6 +45,7 @@ export function validateTournament(raw) {
     return round.map(cleanName);
   });
   for (const field of ['title', 'edition', 'subtitle', 'footer', 'champion', 'sourceUpdated']) out[field] = cleanName(raw[field]).slice(0, 300);
+  out.championLabel = raw.championLabel === undefined ? '優勝' : cleanName(raw.championLabel).slice(0, 40);
   out.accent = /^#[0-9a-f]{6}$/i.test(raw.accent) ? raw.accent : out.accent;
   out.notes = Object.fromEntries(Object.entries(raw.notes || {}).filter(([k, v]) => k.length <= 200 && typeof v === 'string').map(([k, v]) => [k, cleanName(v).slice(0, 200)]));
   for (const key of ['matchNotes', 'resultNotes']) out[key] = out[key].map((row, r) => row.map((_, i) => cleanName(raw[key]?.[r]?.[i]).slice(0, 200)));

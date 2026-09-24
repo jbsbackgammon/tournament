@@ -13,6 +13,7 @@ const ensureJbsEdition = () => {
   if (edition) state.edition = `JBS ${edition}`;
 };
 const orientationFor = format => format === 'a4' ? 'portrait' : 'landscape';
+const initialDisplaySize = size => Number(size) === 8 ? 8 : 16;
 const autoFormatForSize = size => {
   if (Number(size) === 64) { view.format = 'a4'; view.orientation = 'portrait'; }
   else { view.format = 'hd'; view.orientation = 'landscape'; }
@@ -62,7 +63,7 @@ function syncControls() {
   $('source-size').value = state.size;
   syncOutputOptions(state.size);
   syncFormatOptions(view.displaySize);
-  for (const field of ['edition', 'title', 'accent']) $(field).value = state[field];
+  for (const field of ['edition', 'title', 'champion-label', 'accent']) $(field).value = field === 'champion-label' ? state.championLabel : state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
   $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
@@ -120,8 +121,8 @@ async function importText(text, sample = false) {
     if (!await mayReplace()) return;
     state = result.state;
     autoFormatForSize(state.size);
-    view.displaySize = state.size;
-    editRound = 0; dirty = !sample;
+    view.displaySize = initialDisplaySize(state.size);
+    editRound = Math.log2(state.size / view.displaySize); dirty = !sample;
     syncControls(); note(`${state.size}枠を取り込みました。`);
   } catch (error) { note(error.message, true); }
 }
@@ -131,8 +132,8 @@ $('source-size').addEventListener('change', event => {
   const size = Number(event.target.value);
   syncOutputOptions(size);
   syncFormatOptions(size);
-  view.displaySize = size;
-  $('output-size').value = size;
+  view.displaySize = initialDisplaySize(size);
+  $('output-size').value = view.displaySize;
   autoFormatForSize(size);
   $('format').value = view.format;
   preview();
@@ -140,7 +141,7 @@ $('source-size').addEventListener('change', event => {
 $('new-tournament').addEventListener('click', async () => {
   if (!await mayReplace()) return;
   state = createTournament(Number($('source-size').value));
-  view.displaySize = state.size; editRound = 0; dirty = true;
+  view.displaySize = initialDisplaySize(state.size); editRound = Math.log2(state.size / view.displaySize); dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
 const masterSelect = $('tournament-master');
@@ -162,8 +163,9 @@ masterSelect.addEventListener('change', event => {
   masterSelect.hidden = true;
   preview();
 });
-for (const field of ['edition', 'title', 'accent']) $(field).addEventListener('input', event => {
-  state[field] = event.target.value;
+for (const field of ['edition', 'title', 'champion-label', 'accent']) $(field).addEventListener('input', event => {
+  if (field === 'champion-label') state.championLabel = event.target.value;
+  else state[field] = event.target.value;
   if (field === 'title') {
     const master = TOURNAMENT_MASTERS.find(entry => state.title.includes(entry.title));
     if (master) { state.title = master.title; state.accent = master.accent; ensureJbsEdition(); $('title').value = state.title; $('edition').value = state.edition; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent; }
@@ -276,13 +278,6 @@ $('export-png').addEventListener('click', async () => {
 });
 window.addEventListener('beforeunload', event => { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
 
-// Shared example is clearly marked, and is never fetched from an external service.
-try {
-  const response = await fetch('./fixtures/ejbs-16.html');
-  if (response.ok) {
-    state = importTournament(await response.text()).state;
-  }
-} catch { /* The empty manual editor remains usable. */ }
 autoFormatForSize(state.size);
 syncControls();
 

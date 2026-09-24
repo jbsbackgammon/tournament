@@ -107,6 +107,16 @@ test('saved JSON roundtrip and malformed JSON validation', async () => {
   assert.throws(() => validateTournament({ version: 1, size: 16, rounds: [] }));
   assert.equal(validateTournament({ ...state, accent: 'red"/><script>' }).accent, '#000000');
 });
+test('champion label defaults to 優勝, can be changed, and survives saved JSON', () => {
+  const state = createTournament(16);
+  assert.equal(state.title, ''); assert.equal(state.edition, ''); assert.equal(state.accent, '#000000');
+  assert.equal(state.championLabel, '優勝');
+  state.championLabel = 'WINNER';
+  assert.ok(renderBracket(state).includes('>WINNER</text>'));
+  assert.equal(validateTournament(JSON.parse(JSON.stringify(state))).championLabel, 'WINNER');
+  const legacy = { ...state }; delete legacy.championLabel;
+  assert.equal(validateTournament(legacy).championLabel, '優勝');
+});
 test('supplementary information hidden only for 64 display; footer titles opt-in', () => {
   const state = createTournament(64); state.showNotes = true; state.rounds[0][0] = 'A'; state.rounds[2][0] = 'A'; state.notes.A = 'NOTE_MARKER';
   assert.ok(!renderBracket(state).includes('NOTE_MARKER'));
