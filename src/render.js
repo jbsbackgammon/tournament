@@ -83,8 +83,8 @@ export function renderBracket(state, options = {}) {
       if (state.showResultNotes) {
         const align = p.side ? 'right' : 'left';
         const x = p.side ? p.x - 2 : p.x + 10;
-        supplementParts.push(supplementText(upperResult, x, nodes[r][i].y + font * .2, Math.abs(dest.x - p.x) - 20, align));
-        supplementParts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + font * .2, Math.abs(dest.x - p.x) - 20, align));
+        supplementParts.push(supplementText(upperResult, x, nodes[r][i].y - line * 1.2, Math.abs(dest.x - p.x) - 20, align));
+        supplementParts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + line * 2.2, Math.abs(dest.x - p.x) - 20, align));
       }
     }
   }
