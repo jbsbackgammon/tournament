@@ -104,5 +104,13 @@ export function seededRounds(state) {
       if (upper && sameName(upper, lower) && !parent) rounds[r + 1][i / 2] = upper;
     }
   }
+  // eJBS can repeat a player in both slots when that branch contains no
+  // opposing entrant. Present it as the player versus BYE, keeping the upper
+  // slot as the automatic winner.
+  for (const round of rounds) {
+    for (let i = 0; i < round.length; i += 2) {
+      if (round[i] && sameName(round[i], round[i + 1])) round[i + 1] = 'BYE';
+    }
+  }
   return rounds;
 }

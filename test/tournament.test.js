@@ -25,9 +25,10 @@ test('64 to best16 uses third round, not first 16 entrants; source unchanged', a
   assert.ok(svg.includes('永田 隆太')); assert.ok(svg.includes('泉 良祐'));
   assert.ok(!svg.includes('早川 佳希')); assert.equal(JSON.stringify(state), saved);
 });
-test('names that occur in multiple slots are not silently deduplicated', async () => {
-  const state = await load(64);
-  assert.equal(seededRounds(state)[2].filter(n => n === '平林 直').length, 2);
+test('same names in separate branches remain independent entrants', () => {
+  const state = createTournament(8);
+  state.rounds[0][0] = '同名選手'; state.rounds[0][2] = '同名選手';
+  assert.equal(seededRounds(state)[0].filter(n => n === '同名選手').length, 2);
 });
 test('winner changes clear downstream dependent winners including champion', () => {
   const state = createTournament(8);
@@ -69,7 +70,16 @@ test('plain text imports names, tabs and chooses sufficient slots', () => {
 test('identical opponents automatically advance the upper player', () => {
   const state = createTournament(8);
   state.rounds[0][0] = '同名選手'; state.rounds[0][1] = '同名選手';
-  assert.equal(seededRounds(state)[1][0], '同名選手');
+  const rounds = seededRounds(state);
+  assert.equal(rounds[1][0], '同名選手');
+  assert.deepEqual(rounds[0].slice(0, 2), ['同名選手', 'BYE']);
+});
+test('Meijin duplicate branches show the lower slot as BYE at 16 and 32 players', async () => {
+  const state = await load(64), rounds = seededRounds(state);
+  assert.deepEqual(rounds[2].slice(12, 14), ['平林 直', 'BYE']);
+  for (const [index, name] of [[20, '本庄 良尭'], [22, '田中 準一'], [28, '太田 智'], [30, '名城 健太郎']]) {
+    assert.deepEqual(rounds[1].slice(index, index + 2), [name, 'BYE']);
+  }
 });
 test('eJBS player names discard slash metadata', () => {
   const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(',') };
