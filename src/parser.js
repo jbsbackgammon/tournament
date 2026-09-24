@@ -45,7 +45,7 @@ export function importTournament(text, requestedSize = 16) {
     const state = createTournament(size);
     let offset = 0;
     state.rounds = state.rounds.map(round => { const result = entries.slice(offset, offset + round.length); offset += round.length; return result; });
-    const sourceTitle = cleanName(data.name);
+    const sourceTitle = playerName(data.name);
     const master = TOURNAMENT_MASTERS.find(entry => sourceTitle.includes(entry.title));
     const edition = sourceTitle.match(/第\s*\d+\s*[回期]/)?.[0].replace(/\s+/g, '') || '';
     if (master) {

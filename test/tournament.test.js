@@ -107,7 +107,7 @@ test('eJBS player names discard slash metadata', () => {
   assert.equal(state.champion, '選手A');
 });
 test('eJBS master tournament names apply the normalized edition, title and color', () => {
-  const data = { players: 8, data: Array(14).fill('').join(','), name: 'JBS 第 32 期 盤聖戦 予選' };
+  const data = { players: 8, data: Array(14).fill('').join(','), name: 'JBS 第 32 期 盤聖戦/内部大会情報' };
   const state = importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state;
   assert.equal(state.edition, 'JBS 第32期');
   assert.equal(state.title, '盤聖戦');
