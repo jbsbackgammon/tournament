@@ -142,6 +142,14 @@ test('winner routes include the outgoing arm through quarterfinals on both sides
     assert.match(svg, /stroke="#e71920"[^>]*stroke-linecap="square"/);
   }
 });
+
+test('blank player names render as inactive BYE slots', () => {
+  const state = createTournament(8);
+  const svg = renderBracket(state);
+  assert.equal((svg.match(/>BYE<\/text>/g) || []).length, 8);
+  assert.equal((svg.match(/fill="#d9d9d9" stroke="#858585"/g) || []).length, 8);
+  assert.ok(!svg.includes('>未定</text>'));
+});
 test('result supplements use valid SVG alignment outside both player blocks', () => {
   const state = createTournament(8);
   state.showResultNotes = true;

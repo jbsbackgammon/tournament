@@ -16,8 +16,17 @@ const syncOutputOptions = limit => {
   for (const option of $('output-size').options) option.hidden = Number(option.value) > Number(limit);
 };
 const syncFormatOptions = limit => {
+  const hd = $('format').querySelector('option[value="hd"]');
+  const a5 = $('format').querySelector('option[value="a5"]');
   const a4 = $('format').querySelector('option[value="a4"]');
+  const is64 = Number(limit) === 64;
+  hd.hidden = is64;
+  a5.hidden = is64;
   a4.hidden = Number(limit) < 32;
+  if (is64) {
+    view.format = 'a4';
+    view.orientation = 'portrait';
+  }
   if (a4.hidden && view.format === 'a4') autoFormatForSize(limit);
 };
 let noticeTimer;
@@ -82,7 +91,7 @@ function renderPlayers() {
       const opponent = names[index % 2 ? index - 1 : index + 1];
       const selected = sameName(name, winner);
       const lost = !selected && sameName(opponent, winner);
-      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${state.showResultNotes ? `<input class="result-note" data-result-note="${index}" value="${esc(state.resultNotes?.[editRound]?.[index] || '')}" maxlength="200" aria-label="選手${index + 1}の結果補足">` : ''}${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の選手補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
+      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${state.showResultNotes ? `<input class="result-note" data-result-note="${index}" value="${esc(state.resultNotes?.[editRound]?.[index] || '')}" maxlength="200" placeholder="結果補足" aria-label="選手${index + 1}の結果補足">` : ''}${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" placeholder="選手補足" aria-label="選手${index + 1}の選手補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
     const matchIndex = i / 2;
     const extra = state.showMatchNotes ? `<input class="match-note" data-match-note="${matchIndex}" value="${esc(state.matchNotes?.[editRound]?.[matchIndex] || '')}" placeholder="試合補足" aria-label="試合補足">` : '';

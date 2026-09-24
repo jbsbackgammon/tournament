@@ -133,7 +133,8 @@ export function renderBracket(state, options = {}) {
     const p = nodes[0][i];
     const x = p.side ? W - margin - box : margin;
     const y = p.y - pitch / 2;
-    const fill = name === 'BYE' ? '#d9d9d9' : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
+    const displayName = name || 'BYE';
+    const fill = displayName === 'BYE' ? '#d9d9d9' : (eliminated(i) && state.showLosersGray ? '#d9d9d9' : '#fff');
     const note = notes ? state.notes[name] : '';
     parts.push(`<rect x="${x}" y="${y}" width="${box}" height="${pitch}" fill="${fill}" stroke="#858585" stroke-width="${size === 64 ? 1.5 : 3.5}"/>`);
     if (note) {
@@ -142,10 +143,10 @@ export function renderBracket(state, options = {}) {
       const gap = Math.max(0, (pitch - font - noteFont) / 3);
       const nameY = y + gap + font * .8;
       const noteY = nameY + gap + font * .2 + noteFont * .8;
-      parts.push(text(name || '未定', x + box / 2, nameY, font, box - 22));
+      parts.push(text(displayName, x + box / 2, nameY, font, box - 22));
       parts.push(text(note, x + box / 2, noteY, noteFont, box - 24));
     } else {
-      parts.push(text(name || '未定', x + box / 2, p.y + font * .35, font, box - 22));
+      parts.push(text(displayName, x + box / 2, p.y + font * .35, font, box - 22));
     }
   });
   parts.push(...supplementParts);
