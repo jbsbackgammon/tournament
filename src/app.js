@@ -82,10 +82,10 @@ function renderPlayers() {
       const opponent = names[index % 2 ? index - 1 : index + 1];
       const selected = sameName(name, winner);
       const lost = !selected && sameName(opponent, winner);
-      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
+      return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${state.showResultNotes ? `<input class="result-note" data-result-note="${index}" value="${esc(state.resultNotes?.[editRound]?.[index] || '')}" maxlength="200" aria-label="選手${index + 1}の結果補足">` : ''}${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の選手補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
     const matchIndex = i / 2;
-    const extra = `${state.showMatchNotes ? `<input class="match-note" data-match-note="${matchIndex}" value="${esc(state.matchNotes?.[editRound]?.[matchIndex] || '')}" placeholder="試合補足" aria-label="試合補足">` : ''}${state.showResultNotes ? `<input class="result-note" data-result-note="${matchIndex}" value="${esc(state.resultNotes?.[editRound]?.[matchIndex] || '')}" placeholder="結果補足" aria-label="結果補足">` : ''}`;
+    const extra = state.showMatchNotes ? `<input class="match-note" data-match-note="${matchIndex}" value="${esc(state.matchNotes?.[editRound]?.[matchIndex] || '')}" placeholder="試合補足" aria-label="試合補足">` : '';
     cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}${extra}</div>`);
   }
   $('players-editor').innerHTML = cards.join('');

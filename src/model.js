@@ -22,7 +22,7 @@ export function createTournament(size = 16) {
   return {
     version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
-    champion: '', notes: {}, matchNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), resultNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), roundPoints: Array(Math.log2(size)).fill(''),
+    champion: '', notes: {}, matchNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), resultNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')), roundPoints: Array(Math.log2(size)).fill(''),
     showNotes: false, showResultNotes: false, showMatchNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true,
     titles: TITLE_DEFAULTS.map(entry => ({ ...entry })),
     sourceUpdated: ''

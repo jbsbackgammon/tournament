@@ -71,9 +71,15 @@ export function renderBracket(state, options = {}) {
     for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
       const p = nodes[r][i], dest = nodes[r + 1][Math.floor(i / 2)], midX = (p.x + dest.x) / 2;
       const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
-      const result = state.resultNotes?.[start + r]?.[Math.floor(i / 2)];
+      const upperResult = state.resultNotes?.[start + r]?.[i];
+      const lowerResult = state.resultNotes?.[start + r]?.[i + 1];
       if (state.showMatchNotes) parts.push(supplementText(note, midX, p.y - line * .8, Math.abs(dest.x - p.x) - 20));
-      if (state.showResultNotes) parts.push(supplementText(result, p.side ? midX : midX, p.y + line * 2.2, Math.abs(dest.x - p.x) - 20, p.side ? 'right' : 'left'));
+      if (state.showResultNotes) {
+        const align = p.side ? 'right' : 'left';
+        const x = p.side ? midX : midX;
+        parts.push(supplementText(upperResult, x, nodes[r][i].y - line * 1.2, Math.abs(dest.x - p.x) - 20, align));
+        parts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + line * 2.2, Math.abs(dest.x - p.x) - 20, align));
+      }
     }
   }
   const finalY = nodes.at(-1)[0].y;
