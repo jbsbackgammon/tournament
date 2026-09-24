@@ -91,5 +91,14 @@ export function seededRounds(state) {
       }
     });
   }
+  // When both sides of a match contain the same name, treat the upper side
+  // as the automatic winner unless a later round already has a result.
+  for (let r = 0; r < rounds.length - 1; r++) {
+    for (let i = 0; i < rounds[r].length; i += 2) {
+      const upper = rounds[r][i], lower = rounds[r][i + 1];
+      const parent = rounds[r + 1][i / 2];
+      if (upper && sameName(upper, lower) && !parent) rounds[r + 1][i / 2] = upper;
+    }
+  }
   return rounds;
 }
