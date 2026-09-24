@@ -64,9 +64,14 @@ export function renderBracket(state, options = {}) {
   }));
   const supplementText = (value, x, y, maxWidth, anchor = 'middle') => {
     if (!value) return '';
-    const fs = Math.min(font * .5, maxWidth / Math.max(1, estimateWidth(value) * .6));
-    const fit = estimateWidth(value) * Math.max(10, fs) > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
-    return `<text x="${x}" y="${y}" font-size="${Math.max(10, fs)}" text-anchor="${anchor}" fill="#080808" font-weight="700"${fit}>${escapeXml(value)}</text>`;
+    const base = font * .5;
+    const chars = [...String(value)];
+    const needsWrap = estimateWidth(value) * base > maxWidth;
+    const fs = needsWrap ? Math.max(10, base * .78) : base;
+    if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
+    const split = Math.ceil(chars.length / 2);
+    const first = chars.slice(0, split).join(''), second = chars.slice(split).join('');
+    return `<text x="${x}" y="${y - fs * .45}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700"><tspan x="${x}" dy="0">${escapeXml(first)}</tspan><tspan x="${x}" dy="${fs * 1.05}">${escapeXml(second)}</tspan></text>`;
   };
   if (state.showMatchNotes || state.showResultNotes) {
     for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
