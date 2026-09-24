@@ -66,7 +66,7 @@ export function renderBracket(state, options = {}) {
     if (!value) return '';
     const base = font * .5;
     const chars = [...String(value)];
-    const needsWrap = estimateWidth(value) * base > maxWidth;
+    const needsWrap = chars.length > 7;
     const fs = needsWrap ? Math.max(10, base * .78) : base;
     if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
     const split = Math.ceil(chars.length / 2);
