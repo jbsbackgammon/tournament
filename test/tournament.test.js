@@ -133,6 +133,7 @@ test('theme-colored streamlines decorate both upper corners', () => {
   assert.equal((svg.match(/fill="#123456"/g) || []).length, 3);
   assert.ok(svg.includes('M0 0H430C500 0'));
   assert.ok(svg.includes('M1440 0H1010C940 0'));
+  assert.ok(svg.includes('C300 108 150 108 0 108Z'));
 });
 test('supplementary information hidden only for 64 display; footer titles opt-in', () => {
   const state = createTournament(64); state.showNotes = true; state.rounds[0][0] = 'A'; state.rounds[2][0] = 'A'; state.notes.A = 'NOTE_MARKER';

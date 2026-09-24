@@ -53,8 +53,8 @@ export function renderBracket(state, options = {}) {
   };
   // Solid, mirrored streamlines fill the open upper corners while tapering
   // toward the centered tournament heading.
-  parts.push(`<path d="M0 0H430C500 0 555 18 610 52C535 48 480 65 420 100C300 150 150 140 0 118Z" fill="${accent}"/>`);
-  parts.push(`<path d="M${W} 0H${W - 430}C${W - 500} 0 ${W - 555} 18 ${W - 610} 52C${W - 535} 48 ${W - 480} 65 ${W - 420} 100C${W - 300} 150 ${W - 150} 140 ${W} 118Z" fill="${accent}"/>`);
+  parts.push(`<path d="M0 0H430C500 0 555 18 610 52C535 48 480 62 420 88C300 108 150 108 0 108Z" fill="${accent}"/>`);
+  parts.push(`<path d="M${W} 0H${W - 430}C${W - 500} 0 ${W - 555} 18 ${W - 610} 52C${W - 535} 48 ${W - 480} 62 ${W - 420} 88C${W - 300} 108 ${W - 150} 108 ${W} 108Z" fill="${accent}"/>`);
   const paths = [], winners = [], supplementParts = [];
   nodes.forEach((row, r) => row.forEach((p, i) => {
     if (r === levels - 1) return;
