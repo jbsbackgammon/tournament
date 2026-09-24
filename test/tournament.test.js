@@ -101,8 +101,10 @@ test('display-only BYE conversion preserves the Meijin Hirabayashi result route'
   assert.ok(red.includes(`M${source.x} ${source.y}H${destination.x}V${destination.y}`));
 });
 test('eJBS player names discard slash metadata', () => {
-  const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(',') };
-  assert.equal(importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state.rounds[0][0], '選手A');
+  const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(','), winner: '選手A/優勝者情報' };
+  const state = importTournament(`getTourneyCallback(${JSON.stringify(data)});`).state;
+  assert.equal(state.rounds[0][0], '選手A');
+  assert.equal(state.champion, '選手A');
 });
 test('eJBS master tournament names apply the normalized edition, title and color', () => {
   const data = { players: 8, data: Array(14).fill('').join(','), name: 'JBS 第 32 期 盤聖戦 予選' };

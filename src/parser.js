@@ -57,7 +57,7 @@ export function importTournament(text, requestedSize = 16) {
       state.edition = titleMatch?.[1]?.replace(/\s+/g, '') || '';
       state.title = titleMatch?.[2] || sourceTitle;
     }
-    state.champion = cleanName(data.winner);
+    state.champion = playerName(data.winner);
     state.sourceUpdated = cleanName(data.update);
     state.roundPoints = state.roundPoints.map((_, i) => cleanName(String(data.roundpts ?? '').split(',')[i]));
     return { state, message: `${size}枠・${state.rounds.length}ラウンドの対戦情報を取り込みました。` };
