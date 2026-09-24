@@ -62,14 +62,14 @@ export function renderBracket(state, options = {}) {
       winners.push(d + (next ? `H${next.x}` : ''));
     }
   }));
-  const supplementText = (value, x, y, maxWidth, anchor = 'middle') => {
+  const supplementText = (value, x, y, maxWidth, anchor = 'middle', wrapAt = null) => {
     if (!value) return '';
     const base = font * .5;
     const chars = [...String(value)];
-    const needsWrap = false;
+    const needsWrap = wrapAt !== null && chars.length > wrapAt;
     const fs = needsWrap ? Math.max(10, base * .78) : base;
     if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
-    const split = Math.ceil(chars.length / 2);
+    const split = wrapAt || Math.ceil(chars.length / 2);
     const first = chars.slice(0, split).join(''), second = chars.slice(split).join('');
     return `<text x="${x}" y="${y - fs * .45}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700"><tspan x="${x}" dy="0">${escapeXml(first)}</tspan><tspan x="${x}" dy="${fs * 1.05}">${escapeXml(second)}</tspan></text>`;
   };
@@ -90,8 +90,8 @@ export function renderBracket(state, options = {}) {
     if (state.showResultNotes) {
       const finalNotes = state.resultNotes?.[state.rounds.length - 1] || [];
       const finalY = nodes.at(-1)[0].y;
-      supplementParts.push(supplementText(finalNotes[0], nodes.at(-1)[0].x + 10, finalY - line * 1.2, W / 2 - 40, 'start'));
-      supplementParts.push(supplementText(finalNotes[1], nodes.at(-1)[1].x - 10, finalY - line * 1.2, W / 2 - 40, 'end'));
+      supplementParts.push(supplementText(finalNotes[0], nodes.at(-1)[0].x + 10, finalY - line * 1.2, W / 2 - 40, 'start', 4));
+      supplementParts.push(supplementText(finalNotes[1], nodes.at(-1)[1].x - 10, finalY - line * 1.2, W / 2 - 40, 'end', 4));
     }
   }
   const finalY = nodes.at(-1)[0].y;
