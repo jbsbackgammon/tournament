@@ -30,7 +30,7 @@
     <div id="notice" role="status" aria-live="polite"></div>
     <div class="editing-layout">
       <section class="editor-section">
-        <div class="editor-heading"><h2>編集</h2><div class="editor-options"><label class="check"><input id="show-notes" type="checkbox">選手補足</label><label class="check"><input id="show-result-notes" type="checkbox">結果補足</label><label class="check"><input id="show-match-notes" type="checkbox">試合補足</label><label class="check"><input id="show-losers-gray" type="checkbox">敗者非活性</label><label class="check"><input id="show-titles" type="checkbox">五大タイトル</label><label class="check"><input id="show-bottom-margin" type="checkbox">下余白</label><label class="check"><input id="show-logo" type="checkbox" checked>JBSロゴ</label></div></div>
+        <div class="editor-heading"><h2>編集</h2><div class="editor-options"><label class="check"><input id="show-notes" type="checkbox">選手補足</label><label class="check"><input id="show-result-notes" type="checkbox">結果補足</label><label class="check"><input id="show-match-notes" type="checkbox">試合補足</label><label class="check"><input id="show-losers-gray" type="checkbox">敗者非活性</label><label class="check"><input id="show-titles" type="checkbox">五大タイトル</label><label class="check"><input id="show-bottom-margin" type="checkbox">下余白</label><label class="check"><input id="show-logo" type="checkbox" checked>JBSロゴ</label><label class="check"><input id="show-decoration" type="checkbox" checked>装飾</label></div></div>
         <div class="editor-meta-row"><label>ラウンド<select id="edit-round"></select></label><label class="edition">回次等<input id="edition" maxlength="40"></label><label class="title-picker-label">大会名<div class="title-picker"><button type="button" id="master-toggle">選択</button><input id="title" maxlength="100"><select id="tournament-master" aria-label="大会名マスタ" size="7" hidden></select></div></label><label>優勝文字<input id="champion-label" maxlength="40"></label><label class="accent-field">メインカラー<input id="accent" type="text" inputmode="text" maxlength="7" aria-label="メインカラーコード"><span class="accent-swatch" id="accent-swatch"></span></label></div>
         <div id="players-editor" class="players-grid"></div>
         <div id="titles-editor" hidden></div>
@@ -39,7 +39,7 @@
   </main>
   <dialog id="replace-dialog"><h2>現在の大会データを置き換えますか？</h2><p>必要な場合はキャンセルして「大会データを保存」してください。</p><form method="dialog"><button value="cancel">キャンセル</button><button value="replace" class="dark">置き換える</button></form></dialog>
   <dialog id="history-dialog"><h2>履歴呼出</h2><select id="history-select" size="8"></select><form method="dialog"><button value="cancel">キャンセル</button><button value="load" class="dark">呼び出す</button></form></dialog>
-  <script type="module" src="./src/app.js?v=202609240602"></script>
+  <script type="module" src="./src/app.js?v=202609240603"></script>
 </body>
 </html>
 

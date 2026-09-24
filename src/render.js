@@ -53,7 +53,7 @@ export function renderBracket(state, options = {}) {
   };
   // A single flat-color header follows a shallow arch: deep at both sides and
   // raised at the center so long sponsor/edition text remains on white.
-  parts.push(`<path d="M0 0H${W}V92C1160 35 940 20 720 24C500 20 280 35 0 92Z" fill="${accent}"/>`);
+  if (state.showDecoration !== false) parts.push(`<path d="M0 0H${W}V92C1160 35 940 20 720 24C500 20 280 35 0 92Z" fill="${accent}"/>`);
   const paths = [], winners = [], supplementParts = [];
   nodes.forEach((row, r) => row.forEach((p, i) => {
     if (r === levels - 1) return;

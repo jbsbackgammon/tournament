@@ -133,6 +133,9 @@ test('a flat theme-colored arch decorates the full upper edge', () => {
   assert.equal((svg.match(/fill="#123456"/g) || []).length, 2);
   assert.ok(svg.includes('<path d="M0 0H1440V92C1160 35 940 20 720 24C500 20 280 35 0 92Z"'));
   assert.ok(!svg.includes('linearGradient'));
+  state.showDecoration = false;
+  assert.ok(!renderBracket(state).includes('M0 0H1440V92'));
+  assert.equal(validateTournament({ ...state, showDecoration: undefined }).showDecoration, true);
 });
 test('long edition text stays inside the decoration-free center area', () => {
   const state = createTournament(16); state.edition = 'スポンサー名入り JBS 第32期 特別大会';

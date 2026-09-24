@@ -72,6 +72,7 @@ function syncControls() {
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
   $('show-logo').checked = state.showLogo;
+  $('show-decoration').checked = state.showDecoration;
   $('show-titles').disabled = state.showBottomMargin;
   $('show-bottom-margin').disabled = state.showTitles;
   $('show-losers-gray').checked = state.showLosersGray;
@@ -189,6 +190,7 @@ $('show-losers-gray').addEventListener('change', event => { state.showLosersGray
 $('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; if (state.showTitles) state.showBottomMargin = false; dirty = true; $('titles-editor').hidden = !state.showTitles; syncControls(); });
 $('show-bottom-margin').addEventListener('change', event => { state.showBottomMargin = event.target.checked; if (state.showBottomMargin) state.showTitles = false; dirty = true; $('titles-editor').hidden = true; syncControls(); });
 $('show-logo').addEventListener('change', event => { state.showLogo = event.target.checked; dirty = true; preview(); });
+$('show-decoration').addEventListener('change', event => { state.showDecoration = event.target.checked; dirty = true; preview(); });
 $('titles-editor').addEventListener('input', event => {
   const { ti, tf } = event.target.dataset;
   if (ti === undefined) return;
