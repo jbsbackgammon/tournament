@@ -81,7 +81,11 @@ export function renderBracket(state, options = {}) {
       const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
       const upperResult = state.resultNotes?.[start + r]?.[i];
       const lowerResult = state.resultNotes?.[start + r]?.[i + 1];
-      if (state.showMatchNotes) supplementParts.push(supplementText(note, dest.x + 10, dest.y, Math.abs(dest.x - p.x) - 20, 'start', null, .6, true));
+      if (state.showMatchNotes) {
+        const matchX = dest.x + (p.side ? 10 : -10);
+        const matchAlign = p.side ? 'start' : 'end';
+        supplementParts.push(supplementText(note, matchX, dest.y, Math.abs(dest.x - p.x) - 20, matchAlign, null, .6, true));
+      }
       if (state.showResultNotes) {
         const align = p.side ? 'end' : 'start';
         const x = p.side ? p.x - 10 : p.x + 10;

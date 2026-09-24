@@ -154,13 +154,16 @@ test('result supplements use valid SVG alignment outside both player blocks', ()
   assert.ok(!svg.includes('text-anchor="right"'));
 });
 
-test('match supplements sit to the right of the connector intersection and are vertically centered', () => {
+test('match supplements sit inside both connector shapes and are vertically centered', () => {
   const state = createTournament(8);
   state.showMatchNotes = true;
   state.matchNotes[0][0] = '試合補足';
+  state.matchNotes[0][2] = '右試合補足';
   const { nodes } = bracketGeometry(8, 810);
-  const intersection = nodes[1][0];
+  const leftIntersection = nodes[1][0];
+  const rightIntersection = nodes[1][2];
   const svg = renderBracket(state);
-  assert.match(svg, new RegExp(`<text x="${intersection.x + 10}" y="${intersection.y}" font-size="27" text-anchor="start" dominant-baseline="central"[^>]*>試合補足</text>`));
+  assert.match(svg, new RegExp(`<text x="${leftIntersection.x - 10}" y="${leftIntersection.y}" font-size="27" text-anchor="end" dominant-baseline="central"[^>]*>試合補足</text>`));
+  assert.match(svg, new RegExp(`<text x="${rightIntersection.x + 10}" y="${rightIntersection.y}" font-size="27" text-anchor="start" dominant-baseline="central"[^>]*>右試合補足</text>`));
 });
 
