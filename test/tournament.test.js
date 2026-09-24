@@ -127,12 +127,12 @@ test('champion label defaults to 優勝, can be changed, and survives saved JSON
   const legacy = { ...state }; delete legacy.championLabel;
   assert.equal(validateTournament(legacy).championLabel, '優勝');
 });
-test('theme-colored domes decorate both upper corners', () => {
+test('a flat theme-colored arch decorates the full upper edge', () => {
   const state = createTournament(16); state.accent = '#123456';
   const svg = renderBracket(state);
-  assert.equal((svg.match(/fill="#123456"/g) || []).length, 3);
-  assert.ok(svg.includes('<ellipse cx="0" cy="0" rx="480" ry="100"'));
-  assert.ok(svg.includes('<ellipse cx="1440" cy="0" rx="480" ry="100"'));
+  assert.equal((svg.match(/fill="#123456"/g) || []).length, 2);
+  assert.ok(svg.includes('<path d="M0 0H1440V92C1160 35 940 20 720 24C500 20 280 35 0 92Z"'));
+  assert.ok(!svg.includes('linearGradient'));
 });
 test('long edition text stays inside the decoration-free center area', () => {
   const state = createTournament(16); state.edition = 'スポンサー名入り JBS 第32期 特別大会';
