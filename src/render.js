@@ -69,9 +69,10 @@ export function renderBracket(state, options = {}) {
     const needsWrap = wrapAt !== null && chars.length > wrapAt;
     const fs = base;
     if (!needsWrap) return `<text x="${x}" y="${y}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
-    const split = wrapAt || Math.ceil(chars.length / 2);
-    const first = chars.slice(0, split).join(''), second = chars.slice(split).join('');
-    return `<text x="${x}" y="${y - fs * .45}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700"><tspan x="${x}" dy="0">${escapeXml(first)}</tspan><tspan x="${x}" dy="${fs * 1.05}">${escapeXml(second)}</tspan></text>`;
+    const lines = [];
+    for (let i = 0; i < chars.length; i += wrapAt) lines.push(chars.slice(i, i + wrapAt).join(''));
+    const startY = y - fs * 1.05 * (lines.length - 1);
+    return `<text x="${x}" y="${startY}" font-size="${fs}" text-anchor="${anchor}" fill="#080808" font-weight="700">${lines.map((line, i) => `<tspan x="${x}" dy="${i ? fs * 1.05 : 0}">${escapeXml(line)}</tspan>`).join('')}</text>`;
   };
   if (state.showMatchNotes || state.showResultNotes) {
     for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
