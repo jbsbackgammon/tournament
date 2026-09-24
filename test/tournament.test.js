@@ -167,3 +167,14 @@ test('match supplements sit inside both connector shapes and are vertically cent
   assert.match(svg, new RegExp(`<text x="${rightIntersection.x + 10}" y="${rightIntersection.y}" font-size="29.25" text-anchor="start" dominant-baseline="central"[^>]*>右試合補足</text>`));
 });
 
+test('final match supplement is centered below the center connector intersection', () => {
+  const state = createTournament(8);
+  state.showMatchNotes = true;
+  state.matchNotes.at(-1)[0] = '決勝補足';
+  const { W, nodes } = bracketGeometry(8, 810);
+  const finalY = nodes.at(-1)[0].y;
+  const noteY = finalY + 14 + 45 * .325;
+  const svg = renderBracket(state);
+  assert.match(svg, new RegExp(`<text x="${W / 2}" y="${noteY}" font-size="29.25" text-anchor="middle" dominant-baseline="central"[^>]*>決勝補足</text>`));
+});
+

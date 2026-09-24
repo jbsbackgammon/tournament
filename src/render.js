@@ -102,6 +102,11 @@ export function renderBracket(state, options = {}) {
       supplementParts.push(supplementText(finalNotes[0], nodes.at(-1)[0].x + 10, finalY - line * 1.2, W / 2 - 40, 'start', 4));
       supplementParts.push(supplementText(finalNotes[1], nodes.at(-1)[1].x - 10, finalY - line * 1.2, W / 2 - 40, 'end', 4));
     }
+    if (state.showMatchNotes) {
+      const finalMatchNote = state.matchNotes?.[state.rounds.length - 1]?.[0];
+      const finalY = nodes.at(-1)[0].y;
+      supplementParts.push(supplementText(finalMatchNote, W / 2, finalY + line + font * .325, W / 2 - 40, 'middle', null, .65, true));
+    }
   }
   const finalY = nodes.at(-1)[0].y;
   for (const side of [0, 1]) {
