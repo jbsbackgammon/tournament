@@ -172,7 +172,8 @@ export function renderBracket(state, options = {}) {
   const subtitleY = titleY + (20 * outputScale) / pxScale;
   parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${subtitleY}" width="${subtitleWidth}" height="${subtitleHeight}" fill="${accent}"/>`);
   parts.push(text(state.subtitle, W / 2, subtitleY + (46 * outputScale) / pxScale, subtitleFont, subtitleWidth - (20 * outputScale) / pxScale, '#fff'));
-  const championY = Math.max(titleY + 115, finalY - (portrait ? H * .10 : 102));
+  const championOffset = size === 64 ? 102 : (portrait ? H * .10 : 102);
+  const championY = Math.max(titleY + 115, finalY - championOffset);
   parts.push(text('優勝', W / 2, championY, 26, 205));
   if (state.champion) parts.push(text(state.champion, W / 2, championY + 36, 29, 202));
   const logoW = portrait ? 205 : 178, logoH = logoW * 1100 / 1830;

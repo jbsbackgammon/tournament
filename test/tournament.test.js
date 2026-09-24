@@ -186,3 +186,13 @@ test('final match supplement is centered below the center connector intersection
   assert.match(svg, new RegExp(`<text x="${W / 2}" y="${noteY}" font-size="29.25" text-anchor="middle" dominant-baseline="central"[^>]*>決勝補足</text>`));
 });
 
+test('64-player A4 champion label sits near the final connector', () => {
+  const state = createTournament(64);
+  const { width, height } = dimensions('a4', 'portrait');
+  const H = height / width * 1440;
+  const { nodes } = bracketGeometry(64, H, false, false, width);
+  const expectedY = nodes.at(-1)[0].y - 102;
+  const svg = renderBracket(state, { displaySize: 64, format: 'a4', orientation: 'portrait' });
+  assert.match(svg, new RegExp(`<text x="720" y="${expectedY}" font-size="26"[^>]*>優勝</text>`));
+});
+
