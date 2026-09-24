@@ -1,4 +1,4 @@
-import { displayRounds, sameName, seededRounds, TITLE_COLORS } from './model.js';
+import { displayRounds, displayEntrants, sameName, seededRounds, TITLE_COLORS } from './model.js';
 import { logoData } from './logo.js';
 
 export const escapeXml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
@@ -40,6 +40,7 @@ export function renderBracket(state, options = {}) {
   const H = height / width * 1440;
   const { start } = displayRounds(state, size);
   const rounds = seededRounds(state).slice(start);
+  rounds[0] = displayEntrants(rounds[0]);
   const { W, margin, box, top, pitch, nodes, levels, bottom } = bracketGeometry(size, H, state.showTitles, state.showBottomMargin, width);
   const line = size === 64 ? 8 : size === 32 ? 10 : 14;
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);

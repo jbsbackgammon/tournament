@@ -15,6 +15,13 @@ export const TOURNAMENT_MASTERS = [
 ].map(([title, accent]) => ({ title, accent }));
 export const cleanName = value => String(value ?? '').replace(/[\u0000-\u001f]/g, ' ').trim();
 export const sameName = (a, b) => !!cleanName(a) && cleanName(a).replace(/[\s\u3000]/g, '') === cleanName(b).replace(/[\s\u3000]/g, '');
+export const displayEntrants = round => {
+  const shown = [...round];
+  for (let i = 0; i < shown.length; i += 2) {
+    if (shown[i] && sameName(shown[i], shown[i + 1])) shown[i + 1] = 'BYE';
+  }
+  return shown;
+};
 export const roundLabel = count => ({ 2: '決勝', 4: '準決勝', 8: '準々決勝' }[count] || `ベスト${count}`);
 
 export function createTournament(size = 16) {
@@ -102,14 +109,6 @@ export function seededRounds(state) {
       const upper = rounds[r][i], lower = rounds[r][i + 1];
       const parent = rounds[r + 1][i / 2];
       if (upper && sameName(upper, lower) && !parent) rounds[r + 1][i / 2] = upper;
-    }
-  }
-  // eJBS can repeat a player in both slots when that branch contains no
-  // opposing entrant. Present it as the player versus BYE, keeping the upper
-  // slot as the automatic winner.
-  for (const round of rounds) {
-    for (let i = 0; i < round.length; i += 2) {
-      if (round[i] && sameName(round[i], round[i + 1])) round[i + 1] = 'BYE';
     }
   }
   return rounds;

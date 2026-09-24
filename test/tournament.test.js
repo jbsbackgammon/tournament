@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { createTournament, seededRounds, displayRounds, advance, editEntry, validateTournament } from '../src/model.js';
+import { createTournament, seededRounds, displayRounds, displayEntrants, advance, editEntry, validateTournament } from '../src/model.js';
 import { importTournament } from '../src/parser.js';
 import { renderBracket, dimensions, bracketGeometry } from '../src/render.js';
 import { withDpi, crc32 } from '../src/export.js';
@@ -72,14 +72,23 @@ test('identical opponents automatically advance the upper player', () => {
   state.rounds[0][0] = '同名選手'; state.rounds[0][1] = '同名選手';
   const rounds = seededRounds(state);
   assert.equal(rounds[1][0], '同名選手');
-  assert.deepEqual(rounds[0].slice(0, 2), ['同名選手', 'BYE']);
+  assert.deepEqual(displayEntrants(rounds[0]).slice(0, 2), ['同名選手', 'BYE']);
 });
 test('Meijin duplicate branches show the lower slot as BYE at 16 and 32 players', async () => {
   const state = await load(64), rounds = seededRounds(state);
-  assert.deepEqual(rounds[2].slice(12, 14), ['平林 直', 'BYE']);
+  assert.deepEqual(displayEntrants(rounds[2]).slice(12, 14), ['平林 直', 'BYE']);
   for (const [index, name] of [[20, '本庄 良尭'], [22, '田中 準一'], [28, '太田 智'], [30, '名城 健太郎']]) {
-    assert.deepEqual(rounds[1].slice(index, index + 2), [name, 'BYE']);
+    assert.deepEqual(displayEntrants(rounds[1]).slice(index, index + 2), [name, 'BYE']);
   }
+});
+test('display-only BYE conversion preserves the Meijin Hirabayashi result route', async () => {
+  const state = await load(64);
+  const svg = renderBracket(state, { displaySize: 32, format: 'hd' });
+  assert.ok(svg.includes('平林 直'));
+  const red = svg.match(/<g stroke="#e71920"[^>]*>(.*?)<\/g>/)[1];
+  const { nodes } = bracketGeometry(32, 810);
+  const source = nodes[0][26], destination = nodes[1][13];
+  assert.ok(red.includes(`M${source.x} ${source.y}H${destination.x}V${destination.y}`));
 });
 test('eJBS player names discard slash metadata', () => {
   const data = { players: 8, data: Array(14).fill('').map((_, i) => i === 0 ? '選手A/内部情報' : '').join(',') };

@@ -1,4 +1,4 @@
-import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, advance, seededRounds, sameName } from './model.js';
+import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, advance, seededRounds, displayEntrants, sameName } from './model.js';
 import { importTournament } from './parser.js';
 import { renderBracket, dimensions, escapeXml as esc } from './render.js';
 import { exportPng, downloadBlob } from './export.js';
@@ -88,7 +88,7 @@ function renderTitles() {
 }
 
 function renderPlayers() {
-  const rounds = seededRounds(state), names = rounds[editRound];
+  const rounds = seededRounds(state), names = displayEntrants(rounds[editRound]);
   const showNotes = state.showNotes && view.displaySize !== 64;
   const cards = [];
   for (let i = 0; i < names.length; i += 2) {
