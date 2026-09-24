@@ -86,7 +86,7 @@ export function renderBracket(state, options = {}) {
         const x = p.side ? p.x - 10 : p.x + 10;
         // The rendered glyph height varies with the compact 32/64-player layouts.
         // Tune the lower baseline per size so its visible gap matches the upper note.
-        const lowerBaselineOffset = font * (size === 32 ? .25 : size === 64 ? .4 : .5);
+        const lowerBaselineOffset = font * (size === 32 ? .25 : size === 64 ? .4 : .5) + (size === 32 ? 2 : 0);
         supplementParts.push(supplementText(upperResult, x, nodes[r][i].y - line * 1.2, Math.abs(dest.x - p.x) - 20, align));
         supplementParts.push(supplementText(lowerResult, x, nodes[r][i + 1].y + line * 1.2 + lowerBaselineOffset, Math.abs(dest.x - p.x) - 20, align));
       }
