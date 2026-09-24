@@ -1,4 +1,4 @@
-import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, advance, seededRounds, displayEntrants, sameName } from './model.js';
+import { createTournament, validateTournament, SIZES, TITLE_COLORS, TOURNAMENT_MASTERS, roundLabel, editEntry, renameEntry, advance, seededRounds, displayEntrants, sameName } from './model.js';
 import { importTournament } from './parser.js';
 import { renderBracket, dimensions, escapeXml as esc } from './render.js';
 import { exportPng, downloadBlob } from './export.js';
@@ -200,13 +200,15 @@ $('players-editor').addEventListener('input', event => {
   if (player !== undefined) {
     // Materialize inferred seeds before editing so later result invalidation works.
     state.rounds = seededRounds(state);
-    editEntry(state, editRound, Number(player), event.target.value);
+    renameEntry(state, editRound, Number(player), event.target.value);
     const row = event.target.closest('.player-row');
     const button = row.querySelector('[data-win]');
     const name = state.rounds[editRound][Number(player)];
     button.disabled = !name || name === 'BYE';
     button.setAttribute('aria-label', `${name || `選手${Number(player) + 1}`}を勝者にする`);
-    button.classList.remove('is-winner'); button.textContent = '勝';
+    const winner = editRound === state.rounds.length - 1 ? state.champion : state.rounds[editRound + 1][Math.floor(Number(player) / 2)];
+    const selected = sameName(name, winner);
+    button.classList.toggle('is-winner', selected);
     dirty = true; preview();
   } else if (noteIndex !== undefined) {
     const name = seededRounds(state)[editRound][Number(noteIndex)];

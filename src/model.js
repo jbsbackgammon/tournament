@@ -84,6 +84,23 @@ export function editEntry(state, round, index, value) {
   if (sameName(state.champion, previous)) state.champion = '';
 }
 
+// Renaming a player is different from choosing a different winner: keep the
+// existing result and carry the new spelling through that player's winner path.
+export function renameEntry(state, round, index, value) {
+  if (!state.rounds[round] || index < 0 || index >= state.rounds[round].length) throw new Error('選手枠が見つかりません。');
+  const previous = state.rounds[round][index];
+  const next = cleanName(value);
+  if (previous === next) return;
+  state.rounds[round][index] = next;
+  let parent = Math.floor(index / 2);
+  for (let r = round + 1; r < state.rounds.length; r++) {
+    if (!sameName(state.rounds[r][parent], previous)) break;
+    state.rounds[r][parent] = next;
+    parent = Math.floor(parent / 2);
+  }
+  if (sameName(state.champion, previous)) state.champion = next && next.toUpperCase() !== 'BYE' ? next : '';
+}
+
 export function advance(state, round, index) {
   const name = state.rounds[round]?.[index];
   if (!name || name.toUpperCase() === 'BYE') throw new Error('勝者を選ぶ前に選手名を入力してください。');

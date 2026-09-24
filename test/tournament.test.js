@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { createTournament, seededRounds, displayRounds, displayEntrants, advance, editEntry, validateTournament } from '../src/model.js';
+import { createTournament, seededRounds, displayRounds, displayEntrants, advance, editEntry, renameEntry, validateTournament } from '../src/model.js';
 import { importTournament } from '../src/parser.js';
 import { renderBracket, dimensions, bracketGeometry } from '../src/render.js';
 import { withDpi, crc32 } from '../src/export.js';
@@ -37,6 +37,16 @@ test('winner changes clear downstream dependent winners including champion', () 
   assert.equal(state.champion, 'A');
   advance(state, 0, 1);
   assert.equal(state.rounds[1][0], 'B'); assert.equal(state.rounds[2][0], ''); assert.equal(state.champion, '');
+});
+test('renaming a player preserves the existing winner path and champion result', () => {
+  const state = createTournament(8);
+  state.rounds[0][0] = '変更前'; state.rounds[0][1] = '相手';
+  advance(state, 0, 0); advance(state, 1, 0); advance(state, 2, 0);
+  renameEntry(state, 0, 0, '変更後');
+  assert.equal(state.rounds[0][0], '変更後');
+  assert.equal(state.rounds[1][0], '変更後');
+  assert.equal(state.rounds[2][0], '変更後');
+  assert.equal(state.champion, '変更後');
 });
 test('editing an unrelated loser preserves winner and independent seeds', () => {
   const state = createTournament(8);
