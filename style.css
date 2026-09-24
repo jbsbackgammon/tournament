@@ -85,6 +85,7 @@ body,button,input,textarea,select{font-family:"Noto Sans JP","Yu Gothic","Meiryo
 /* Keep the four tournament metadata controls aligned and equally wide. */
 .editor-meta-row>label,.editor-meta-row>.edition{flex:1 1 0!important;min-width:0!important}
 .editor-meta-row input,.editor-meta-row select,.editor-meta-row .title-picker,.editor-meta-row #master-toggle{height:40px;min-height:40px}
+.check:has(input:disabled){color:#9aa3ad}
 
 
 
