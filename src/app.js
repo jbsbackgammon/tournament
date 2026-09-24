@@ -195,7 +195,7 @@ $('titles-editor').addEventListener('input', event => {
   state.titles[Number(ti)][tf] = event.target.value; dirty = true; preview();
 });
 $('edit-round').addEventListener('change', event => { editRound = Number(event.target.value); renderPlayers(); });
-$('players-editor').addEventListener('change', event => {
+$('players-editor').addEventListener('input', event => {
   const { player, note: noteIndex } = event.target.dataset;
   if (player !== undefined) {
     // Materialize inferred seeds before editing so later result invalidation works.
@@ -280,4 +280,3 @@ window.addEventListener('beforeunload', event => { if (dirty) { event.preventDef
 
 autoFormatForSize(state.size);
 syncControls();
-
