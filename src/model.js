@@ -22,8 +22,8 @@ export function createTournament(size = 16) {
   return {
     version: 1, size, title: '', edition: '', subtitle: 'バックギャモン', footer: '', accent: '#000000',
     rounds: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** r).fill('')),
-    champion: '', notes: {}, roundPoints: Array(Math.log2(size)).fill(''),
-    showNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true,
+    champion: '', notes: {}, matchNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), resultNotes: Array.from({ length: Math.log2(size) }, (_, r) => Array(size / 2 ** (r + 1)).fill('')), roundPoints: Array(Math.log2(size)).fill(''),
+    showNotes: false, showResultNotes: false, showMatchNotes: false, showTitles: false, showBottomMargin: false, showLosersGray: false, showByeGray: true,
     titles: TITLE_DEFAULTS.map(entry => ({ ...entry })),
     sourceUpdated: ''
   };
@@ -40,7 +40,10 @@ export function validateTournament(raw) {
   for (const field of ['title', 'edition', 'subtitle', 'footer', 'champion', 'sourceUpdated']) out[field] = cleanName(raw[field]).slice(0, 300);
   out.accent = /^#[0-9a-f]{6}$/i.test(raw.accent) ? raw.accent : out.accent;
   out.notes = Object.fromEntries(Object.entries(raw.notes || {}).filter(([k, v]) => k.length <= 200 && typeof v === 'string').map(([k, v]) => [k, cleanName(v).slice(0, 200)]));
+  for (const key of ['matchNotes', 'resultNotes']) out[key] = out[key].map((row, r) => row.map((_, i) => cleanName(raw[key]?.[r]?.[i]).slice(0, 200)));
   out.showNotes = raw.showNotes === true;
+  out.showResultNotes = raw.showResultNotes === true;
+  out.showMatchNotes = raw.showMatchNotes === true;
   out.showTitles = raw.showTitles === true; out.showBottomMargin = raw.showBottomMargin === true;
   out.showLosersGray = raw.showLosersGray === true;
   out.showByeGray = true;

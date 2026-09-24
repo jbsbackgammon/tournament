@@ -51,6 +51,8 @@ function syncControls() {
   $('accent-swatch').style.backgroundColor = state.accent;
   $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
+  $('show-result-notes').checked = state.showResultNotes;
+  $('show-match-notes').checked = state.showMatchNotes;
   $('show-titles').checked = state.showTitles;
   $('show-bottom-margin').checked = state.showBottomMargin;
   $('show-titles').disabled = state.showBottomMargin;
@@ -82,7 +84,9 @@ function renderPlayers() {
       const lost = !selected && sameName(opponent, winner);
       return `<div class="player-row"><div class="player-fields"><input data-player="${index}" value="${esc(name)}" maxlength="100" aria-label="選手${index + 1}">${showNotes ? `<input class="note" data-note="${index}" value="${esc(state.notes[name] || '')}" maxlength="100" aria-label="選手${index + 1}の補足">` : ''}</div><button data-win="${index}" class="${selected ? 'is-winner' : lost ? 'is-loser' : ''}" ${!name || name === 'BYE' ? 'disabled' : ''} aria-label="${esc(name || `選手${index + 1}`)}を勝者にする">${lost ? '負' : '勝'}</button></div>`;
     }).join('');
-    cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}</div>`);
+    const matchIndex = i / 2;
+    const extra = `${state.showMatchNotes ? `<input class="match-note" data-match-note="${matchIndex}" value="${esc(state.matchNotes?.[editRound]?.[matchIndex] || '')}" placeholder="試合補足" aria-label="試合補足">` : ''}${state.showResultNotes ? `<input class="result-note" data-result-note="${matchIndex}" value="${esc(state.resultNotes?.[editRound]?.[matchIndex] || '')}" placeholder="結果補足" aria-label="結果補足">` : ''}`;
+    cards.push(`<div class="match-card"><div class="match-label">${names.length === 2 ? '決勝' : `${i < names.length / 2 ? '左' : '右'}ブロック　対戦${i / 2 + 1}`}</div>${pair}${extra}</div>`);
   }
   $('players-editor').innerHTML = cards.join('');
 }
@@ -152,6 +156,8 @@ $('output-size').addEventListener('change', event => {
   syncControls();
 });
 $('show-notes').addEventListener('change', event => { state.showNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
+$('show-result-notes').addEventListener('change', event => { state.showResultNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
+$('show-match-notes').addEventListener('change', event => { state.showMatchNotes = event.target.checked; dirty = true; renderPlayers(); preview(); });
 $('show-losers-gray').addEventListener('change', event => { state.showLosersGray = event.target.checked; dirty = true; preview(); });
 $('show-titles').addEventListener('change', event => { state.showTitles = event.target.checked; if (state.showTitles) state.showBottomMargin = false; dirty = true; $('titles-editor').hidden = !state.showTitles; syncControls(); });
 $('show-bottom-margin').addEventListener('change', event => { state.showBottomMargin = event.target.checked; if (state.showBottomMargin) state.showTitles = false; dirty = true; $('titles-editor').hidden = true; syncControls(); });
@@ -178,6 +184,10 @@ $('players-editor').addEventListener('change', event => {
     const name = seededRounds(state)[editRound][Number(noteIndex)];
     if (!name || name === 'BYE') { note('補足を入れる前に選手名を入力してください。', true); return; }
     state.notes[name] = event.target.value; dirty = true; preview();
+  } else if (event.target.dataset.matchNote !== undefined) {
+    state.matchNotes[editRound][Number(event.target.dataset.matchNote)] = event.target.value; dirty = true; preview();
+  } else if (event.target.dataset.resultNote !== undefined) {
+    state.resultNotes[editRound][Number(event.target.dataset.resultNote)] = event.target.value; dirty = true; preview();
   }
 });
 $('players-editor').addEventListener('click', event => {

@@ -62,6 +62,20 @@ export function renderBracket(state, options = {}) {
       winners.push(d + (next ? `H${next.x}` : ''));
     }
   }));
+  const supplementText = (value, x, y, maxWidth, anchor = 'middle') => {
+    if (!value) return '';
+    const fs = Math.min(font * .5, maxWidth / Math.max(1, estimateWidth(value) * .6));
+    return `<text x="${x}" y="${y}" font-size="${Math.max(10, fs)}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
+  };
+  if (state.showMatchNotes || state.showResultNotes) {
+    for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
+      const p = nodes[r][i], dest = nodes[r + 1][Math.floor(i / 2)], midX = (p.x + dest.x) / 2;
+      const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
+      const result = state.resultNotes?.[start + r]?.[Math.floor(i / 2)];
+      if (state.showMatchNotes) parts.push(supplementText(note, midX, p.y - line * .8, Math.abs(dest.x - p.x) - 20));
+      if (state.showResultNotes) parts.push(supplementText(result, p.side ? midX : midX, p.y + line * 2.2, Math.abs(dest.x - p.x) - 20, p.side ? 'right' : 'left'));
+    }
+  }
   const finalY = nodes.at(-1)[0].y;
   for (const side of [0, 1]) {
     const p = nodes.at(-1)[side];
