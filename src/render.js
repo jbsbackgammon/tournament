@@ -65,7 +65,8 @@ export function renderBracket(state, options = {}) {
   const supplementText = (value, x, y, maxWidth, anchor = 'middle') => {
     if (!value) return '';
     const fs = Math.min(font * .5, maxWidth / Math.max(1, estimateWidth(value) * .6));
-    return `<text x="${x}" y="${y}" font-size="${Math.max(10, fs)}" text-anchor="${anchor}" fill="#080808" font-weight="700">${escapeXml(value)}</text>`;
+    const fit = estimateWidth(value) * Math.max(10, fs) > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
+    return `<text x="${x}" y="${y}" font-size="${Math.max(10, fs)}" text-anchor="${anchor}" fill="#080808" font-weight="700"${fit}>${escapeXml(value)}</text>`;
   };
   if (state.showMatchNotes || state.showResultNotes) {
     for (let r = 0; r < levels - 1; r++) for (let i = 0; i < nodes[r].length; i += 2) {
