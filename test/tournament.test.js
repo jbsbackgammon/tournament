@@ -127,6 +127,13 @@ test('champion label defaults to 優勝, can be changed, and survives saved JSON
   const legacy = { ...state }; delete legacy.championLabel;
   assert.equal(validateTournament(legacy).championLabel, '優勝');
 });
+test('theme-colored streamlines decorate both upper corners', () => {
+  const state = createTournament(16); state.accent = '#123456';
+  const svg = renderBracket(state);
+  assert.equal((svg.match(/fill="#123456"/g) || []).length, 3);
+  assert.ok(svg.includes('M0 0H430C500 0'));
+  assert.ok(svg.includes('M1440 0H1010C940 0'));
+});
 test('supplementary information hidden only for 64 display; footer titles opt-in', () => {
   const state = createTournament(64); state.showNotes = true; state.rounds[0][0] = 'A'; state.rounds[2][0] = 'A'; state.notes.A = 'NOTE_MARKER';
   assert.ok(!renderBracket(state).includes('NOTE_MARKER'));
