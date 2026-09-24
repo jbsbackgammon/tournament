@@ -73,7 +73,7 @@ export function renderBracket(state, options = {}) {
       const note = state.matchNotes?.[start + r]?.[Math.floor(i / 2)];
       const upperResult = state.resultNotes?.[start + r]?.[i];
       const lowerResult = state.resultNotes?.[start + r]?.[i + 1];
-      if (state.showMatchNotes) parts.push(supplementText(note, midX, p.y - line * .8, Math.abs(dest.x - p.x) - 20));
+      if (state.showMatchNotes) parts.push(supplementText(note, midX, p.y + font * .2, Math.abs(dest.x - p.x) - 20, p.side ? 'start' : 'end'));
       if (state.showResultNotes) {
         const align = p.side ? 'right' : 'left';
         const x = p.side ? midX : midX;
