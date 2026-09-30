@@ -1,0 +1,5 @@
+リポジトリから削除してください:
+.github/workflows/ci.yml
+
+理由:
+公開前テスト・独立CIを廃止し、mainへのpush後にpages.ymlだけで即時ビルド・公開するため不要です。
