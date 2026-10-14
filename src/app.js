@@ -43,6 +43,10 @@ const note = (message, error = false) => {
   if (!error) noticeTimer = setTimeout(() => { $('notice').textContent = ''; }, 4000);
 };
 const safeFilename = name => (name || 'tournament').replace(/[<>:"/\\|?*\u0000-\u001f]/g, '_').slice(0, 100);
+const pad2 = value => String(value).padStart(2, '0');
+const formatHistoryTimestamp = date => `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
+const formatFileTimestamp = date => `${date.getFullYear()}${pad2(date.getMonth() + 1)}${pad2(date.getDate())}${pad2(date.getHours())}${pad2(date.getMinutes())}${pad2(date.getSeconds())}`;
+const tournamentLabel = snapshot => [snapshot.edition, snapshot.title].filter(Boolean).join(' ') || '大会';
 const historyKey = 'tournament-history-v1';
 function readHistory() { try { const value = JSON.parse(localStorage.getItem(historyKey) || '[]'); return Array.isArray(value) ? value : []; } catch { return []; } }
 function writeHistory(entry) { const items = [entry, ...readHistory().filter(item => item.id !== entry.id)].slice(0, 100); localStorage.setItem(historyKey, JSON.stringify(items)); }
@@ -272,10 +276,10 @@ $('export-png').addEventListener('click', async () => {
     // Capture an immutable snapshot so settings cannot change the filename mid-export.
     const snapshot = structuredClone(state), settings = { ...view };
     const blob = await exportPng(snapshot, settings);
-    const { width, height } = dimensions(settings.format, settings.orientation);
-    downloadBlob(blob, `tournament_${safeFilename(snapshot.edition + snapshot.title)}_${settings.displaySize}_${width}x${height}.png`);
-    const outputTime = new Date().toLocaleString('ja-JP');
-    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${outputTime}・${snapshot.edition || ''}・${snapshot.title || '大会'}`, state: snapshot, view: settings });
+    const exportedAt = new Date();
+    const label = tournamentLabel(snapshot);
+    downloadBlob(blob, `tournament_${safeFilename(`${label}_${formatFileTimestamp(exportedAt)}`)}.png`);
+    writeHistory({ id: `${Date.now()}-${Math.random()}`, label: `${formatHistoryTimestamp(exportedAt)}｜${label}`, state: snapshot, view: settings });
     note('PNGを書き出しました。');
   } catch (error) { note(`PNGを書き出せませんでした。${error.message}`, true); }
   finally { $('export-png').disabled = false; }
