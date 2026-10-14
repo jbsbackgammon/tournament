@@ -245,7 +245,9 @@ $('players-editor').addEventListener('click', event => {
   } catch (error) { note(error.message, true); }
 });
 $('save-json').addEventListener('click', () => {
-  downloadBlob(new Blob([JSON.stringify({ ...state, view }, null, 2)], { type: 'application/json' }), `${safeFilename(state.edition + state.title)}.json`);
+  const exportedAt = new Date();
+  const label = tournamentLabel(state);
+  downloadBlob(new Blob([JSON.stringify({ ...state, view }, null, 2)], { type: 'application/json' }), `tournament_${safeFilename(`${label}_${formatFileTimestamp(exportedAt)}`)}.json`);
   dirty = false; note('大会データを保存しました。');
 });
 $('history-load').addEventListener('click', () => { renderHistory(); $('history-dialog').showModal(); });
