@@ -7,11 +7,43 @@ const $ = id => document.getElementById(id);
 let state = createTournament(16);
 let view = { displaySize: 16, format: 'hd', orientation: 'landscape' };
 let editRound = 0, dirty = false;
+let tournamentMasters = TOURNAMENT_MASTERS.map(entry => ({ ...entry, edition: '', subColor: null, source: 'local' }));
+const masterByTitle = title => tournamentMasters.find(entry => entry.title === title) || null;
 const ensureJbsEdition = () => {
-  if (!TOURNAMENT_MASTERS.some(entry => entry.title === state.title)) return;
+  if (!masterByTitle(state.title)) return;
   const edition = state.edition.match(/第\s*\d+\s*[回期]/)?.[0].replace(/\s+/g, '');
   if (edition) state.edition = `JBS ${edition}`;
 };
+const applyMaster = master => {
+  if (!master) return;
+  state.title = master.title;
+  state.accent = master.accent;
+  if (master.edition) state.edition = master.edition;
+  else ensureJbsEdition();
+};
+async function loadCommonTournamentMasters() {
+  const brand = globalThis.JBSBrand;
+  if (!brand?.load || !brand?.getTournaments) return false;
+  try {
+    await brand.load();
+    const masters = brand.getTournaments().map(entry => ({
+      id: entry.id,
+      title: entry.name,
+      nameEn: entry.nameEn,
+      category: entry.category,
+      accent: entry.color,
+      subColor: entry.subColor,
+      edition: entry.edition || brand.getEdition?.(entry.id) || '',
+      source: 'common'
+    })).filter(entry => entry.title && /^#[0-9a-f]{6}$/i.test(entry.accent));
+    if (!masters.length) return false;
+    tournamentMasters = masters;
+    return true;
+  } catch (error) {
+    console.warn('JBS common 設定を読み込めませんでした。ローカル設定を使用します。', error);
+    return false;
+  }
+}
 const orientationFor = format => format === 'a4' ? 'portrait' : 'landscape';
 const initialDisplaySize = size => Number(size) === 8 ? 8 : 16;
 const autoFormatForSize = size => {
@@ -69,7 +101,7 @@ function syncControls() {
   syncFormatOptions(view.displaySize);
   for (const field of ['edition', 'title', 'champion-label', 'accent']) $(field).value = field === 'champion-label' ? state.championLabel : state[field];
   $('accent-swatch').style.backgroundColor = state.accent;
-  $('tournament-master').value = TOURNAMENT_MASTERS.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
+  $('tournament-master').value = tournamentMasters.some(entry => entry.title === state.title && entry.accent.toLowerCase() === state.accent.toLowerCase()) ? state.title : '';
   $('show-notes').checked = state.showNotes;
   $('show-result-notes').checked = state.showResultNotes;
   $('show-match-notes').checked = state.showMatchNotes;
@@ -122,7 +154,7 @@ async function mayReplace() {
 
 async function importText(text, sample = false) {
   try {
-    const result = importTournament(text, Number($('source-size').value));
+    const result = importTournament(text, Number($('source-size').value), tournamentMasters);
     if (!await mayReplace()) return;
     state = result.state;
     autoFormatForSize(state.size);
@@ -149,8 +181,9 @@ $('new-tournament').addEventListener('click', async () => {
   view.displaySize = initialDisplaySize(state.size); editRound = Math.log2(state.size / view.displaySize); dirty = true;
   syncControls(); note(`${state.size}枠を作成しました。`);
 });
+await loadCommonTournamentMasters();
 const masterSelect = $('tournament-master');
-masterSelect.innerHTML = TOURNAMENT_MASTERS.map(entry => `<option value="${esc(entry.title)}">${esc(entry.title)}</option>`).join('');
+masterSelect.innerHTML = tournamentMasters.map(entry => `<option value="${esc(entry.title)}">${esc(entry.title)}</option>`).join('');
 const masterToggle = $('master-toggle');
 masterToggle.addEventListener('click', () => {
   masterSelect.hidden = false;
@@ -160,9 +193,9 @@ document.addEventListener('click', event => {
   if (!event.target.closest('.title-picker')) masterSelect.hidden = true;
 });
 masterSelect.addEventListener('change', event => {
-  const master = TOURNAMENT_MASTERS.find(entry => entry.title === event.target.value);
+  const master = masterByTitle(event.target.value);
   if (!master) return;
-  state.title = master.title; state.accent = master.accent; ensureJbsEdition(); dirty = true;
+  applyMaster(master); dirty = true;
   $('edition').value = state.edition;
   $('title').value = state.title; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent;
   masterSelect.hidden = true;
@@ -172,8 +205,8 @@ for (const field of ['edition', 'title', 'champion-label', 'accent']) $(field).a
   if (field === 'champion-label') state.championLabel = event.target.value;
   else state[field] = event.target.value;
   if (field === 'title') {
-    const master = TOURNAMENT_MASTERS.find(entry => state.title.includes(entry.title));
-    if (master) { state.title = master.title; state.accent = master.accent; ensureJbsEdition(); $('title').value = state.title; $('edition').value = state.edition; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent; }
+    const master = tournamentMasters.find(entry => state.title.includes(entry.title));
+    if (master) { applyMaster(master); $('title').value = state.title; $('edition').value = state.edition; $('accent').value = state.accent; $('accent-swatch').style.backgroundColor = state.accent; }
     else masterSelect.value = '';
   }
   if (field === 'edition') { ensureJbsEdition(); event.target.value = state.edition; }

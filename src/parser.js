@@ -28,7 +28,7 @@ export function extractCallback(text) {
   throw new Error('eJBSのデータが途中で切れています。');
 }
 
-export function importTournament(text, requestedSize = 16) {
+export function importTournament(text, requestedSize = 16, tournamentMasters = TOURNAMENT_MASTERS) {
   if (text.length > 2_000_000) throw new Error('入力は2MB以内にしてください。');
   if (!text.trim()) throw new Error('ソースまたは選手名を入力してください。');
   let data = extractCallback(text);
@@ -46,7 +46,7 @@ export function importTournament(text, requestedSize = 16) {
     let offset = 0;
     state.rounds = state.rounds.map(round => { const result = entries.slice(offset, offset + round.length); offset += round.length; return result; });
     const sourceTitle = playerName(data.name);
-    const master = TOURNAMENT_MASTERS.find(entry => sourceTitle.includes(entry.title));
+    const master = tournamentMasters.find(entry => sourceTitle.includes(entry.title));
     const edition = sourceTitle.match(/第\s*\d+\s*[回期]/)?.[0].replace(/\s+/g, '') || '';
     if (master) {
       state.edition = edition ? `JBS ${edition}` : '';

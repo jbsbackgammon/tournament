@@ -46,6 +46,7 @@ export function renderBracket(state, options = {}) {
   const font = Math.min(size === 8 ? 45 : 35, pitch * .49);
   const notes = state.showNotes && size !== 64;
   const accent = /^#[0-9a-f]{6}$/i.test(state.accent) ? state.accent : '#000000';
+  const accentText = globalThis.JBSBrand?.getTextColor?.(accent, '#FFFFFF') || '#FFFFFF';
   const parts = [`<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeXml(state.edition + state.title || 'トーナメント表')}">`, `<rect width="${W}" height="${H}" fill="white"/>`, `<g font-family="'Noto Sans JP','Yu Gothic','Meiryo','Hiragino Kaku Gothic ProN',sans-serif" fill="#080808">`];
   const text = (value, x, y, fs, maxWidth, color = '#080808', weight = 700) => {
     const fit = estimateWidth(String(value)) * fs > maxWidth ? ` textLength="${maxWidth}" lengthAdjust="spacingAndGlyphs"` : '';
@@ -176,7 +177,7 @@ export function renderBracket(state, options = {}) {
   const subtitleHeight = (60 * outputScale) / pxScale;
   const subtitleY = titleY + (20 * outputScale) / pxScale;
   parts.push(`<rect x="${W / 2 - subtitleWidth / 2}" y="${subtitleY}" width="${subtitleWidth}" height="${subtitleHeight}" fill="${accent}"/>`);
-  parts.push(text(state.subtitle, W / 2, subtitleY + (46 * outputScale) / pxScale, subtitleFont, subtitleWidth - (20 * outputScale) / pxScale, '#fff'));
+  parts.push(text(state.subtitle, W / 2, subtitleY + (46 * outputScale) / pxScale, subtitleFont, subtitleWidth - (20 * outputScale) / pxScale, accentText));
   const championOffset = size === 64 ? 102 : (portrait ? H * .10 : 102);
   const championY = Math.max(titleY + 115, finalY - championOffset);
   parts.push(text(state.championLabel ?? '優勝', W / 2, championY, 26, 205));
